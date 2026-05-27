@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       console.error("Logout API failed, but clearing local session anyway:", err);
     } finally {
       useAuthStore.getState().clearSession();
-      router.push("/");
+      window.location.href = "/";
     }
   };
 
@@ -230,21 +230,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </span>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Mobile Theme Toggle */}
           <button
+            type="button"
             onClick={toggleTheme}
-            className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-white transition-all"
+            className="p-2 rounded-lg border border-border bg-background/50 text-muted-foreground hover:text-white transition-all active:bg-neutral-800"
           >
-            {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
           
           <button
+            type="button"
             onClick={handleSignOut}
-            className="p-1.5 rounded-lg border border-border hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+            className="p-2 rounded-lg border border-border bg-background/50 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all active:bg-destructive/20"
             title="Sign Out"
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <LogOut className="w-4 h-4" />
           </button>
         </div>
       </div>
