@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [timeStr, setTimeStr] = useState("");
   const [dateStr, setDateStr] = useState("");
+  const [greeting, setGreeting] = useState("Welcome");
 
   useEffect(() => {
     setMounted(true);
@@ -56,6 +57,11 @@ export default function DashboardPage() {
           day: "numeric",
         })
       );
+
+      const hour = now.getHours();
+      if (hour < 12) setGreeting("Good Morning");
+      else if (hour < 18) setGreeting("Good Afternoon");
+      else setGreeting("Good Evening");
     };
 
     updateDateTime();
@@ -91,13 +97,7 @@ export default function DashboardPage() {
     loadDashboardData();
   }, []);
 
-  // 1. Time greeting
-  const getGreeting = () => {
-    const hrs = new Date().getHours();
-    if (hrs < 12) return "Good Morning";
-    if (hrs < 18) return "Good Afternoon";
-    return "Good Evening";
-  };
+
 
   const studentFirstName = profile?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "Student";
 
@@ -207,7 +207,7 @@ export default function DashboardPage() {
               Workspace Active
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">
-              {getGreeting()}, <span className="bg-gradient-to-r from-white via-primary to-blue-400 bg-clip-text text-transparent">{studentFirstName}</span>!
+              {mounted ? greeting : "Welcome"}, <span className="bg-gradient-to-r from-white via-primary to-blue-400 bg-clip-text text-transparent">{studentFirstName}</span>!
             </h2>
             <p className="text-xs text-muted-foreground">
               Ready to coordinate your academic deliverables.
