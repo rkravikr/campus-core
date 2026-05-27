@@ -1,8 +1,14 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "./lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  try {
+    return await updateSession(request);
+  } catch {
+    // If middleware fails (e.g. missing env vars on edge), pass through.
+    // Client-side auth in DashboardLayout handles redirects as fallback.
+    return NextResponse.next();
+  }
 }
 
 export const config = {
