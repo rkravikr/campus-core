@@ -85,9 +85,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const handleSignOut = async () => {
     try {
       await authService.signOut();
-      router.push("/");
     } catch (err) {
-      console.error("Logout failed:", err);
+      console.error("Logout API failed, but clearing local session anyway:", err);
+    } finally {
+      useAuthStore.getState().clearSession();
+      router.push("/");
     }
   };
 
