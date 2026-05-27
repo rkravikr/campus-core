@@ -43,7 +43,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ error: err.message || "Failed to load profile", isLoading: false });
       }
     } else {
-      set({ session, user, error: null });
+      set({ session, user, isLoading: false, error: null });
     }
   },
 
@@ -66,10 +66,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
     }
 
+    // Safety timeout: if Supabase hangs, force UI to unblock after 3 seconds
+    const timeout = setTimeout(() => {
+      if (get().isLoading) {
+        console.warn("Auth initialization timed out, forcing UI unblock");
+        set({ isLoading: false });
+      }
+    }, 3000);
+
     // 1. Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(timeout);
       get().setSession(session);
     }).catch((err) => {
+      clearTimeout(timeout);
       set({ error: err.message || "Failed to get auth session", isLoading: false });
     });
 
