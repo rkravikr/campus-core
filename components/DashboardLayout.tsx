@@ -188,6 +188,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className={`flex items-center gap-1.5 ${isCollapsed ? "flex-col mt-2" : ""}`}>
               {/* Theme Toggle Button */}
               <button
+                type="button"
                 onClick={toggleTheme}
                 className="p-2 rounded-lg border border-border bg-[#101014]/60 hover:bg-neutral-900 text-muted-foreground hover:text-white transition-all cursor-pointer"
                 title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
@@ -197,6 +198,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
               {/* Log Out */}
               <button
+                type="button"
                 onClick={handleSignOut}
                 className="p-2 rounded-lg border border-border bg-[#101014]/60 hover:border-destructive hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all cursor-pointer"
                 title="Sign Out"
