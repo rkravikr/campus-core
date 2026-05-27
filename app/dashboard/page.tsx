@@ -369,7 +369,7 @@ export default function DashboardPage() {
                     </div>
                     <p className="text-xs text-neutral-300 font-bold uppercase tracking-wider">Free Workspace Today</p>
                     <p className="text-[10px] text-muted-foreground mt-1.5">
-                      No classes are scheduled on {todayDay}. Time for self study or relaxation!
+                      No classes are scheduled on {mounted ? todayDay : "today"}. Time for self study or relaxation!
                     </p>
                   </div>
                 ) : (

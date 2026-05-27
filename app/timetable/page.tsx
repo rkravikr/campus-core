@@ -219,7 +219,7 @@ export default function TimetablePage() {
             <div className="hidden md:grid grid-cols-7 gap-3 text-left">
               {weekdays.map((day) => {
                 const dayClasses = getDayClasses(day);
-                const isToday = new Date().getDay() === (weekdays.indexOf(day) + 1) % 7; // checks if day matches today
+                const isToday = mounted && new Date().getDay() === (weekdays.indexOf(day) + 1) % 7; // checks if day matches today
                 
                 return (
                   <div key={day} className="flex flex-col gap-4">
