@@ -214,13 +214,16 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 z-10">
+          <div className="flex items-center gap-3 shrink-0 z-10 flex-wrap">
             <span className="text-[10px] text-muted-foreground px-3 py-1 rounded-full border border-border bg-card/60 font-semibold tracking-wider uppercase">
               {profile?.course || "Undergrad Program"}
             </span>
             <span className="text-[10px] text-primary px-3 py-1 rounded-full border border-primary/20 bg-primary/5 font-extrabold tracking-wider uppercase">
               Sem {profile?.semester || "1"}
             </span>
+            <Link href="/docs" className="text-[10px] text-muted-foreground hover:text-primary px-3 py-1 rounded-full border border-border hover:border-primary/30 bg-card/60 hover:bg-primary/5 font-semibold tracking-wider uppercase transition-all">
+              Read V1 Docs
+            </Link>
           </div>
         </div>
 

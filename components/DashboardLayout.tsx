@@ -85,7 +85,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const handleSignOut = async () => {
     try {
       await authService.signOut();
-      router.push("/login");
+      router.push("/");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -248,7 +248,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 border-t border-border bg-card/85 backdrop-blur-lg flex items-center justify-around px-4 z-20 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 border-t border-border bg-card/85 backdrop-blur-lg flex items-center justify-evenly z-20 safe-bottom">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -256,12 +256,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
-                isActive ? "text-primary scale-105" : "text-muted-foreground hover:text-white"
+              className={`flex flex-col items-center justify-center h-full gap-0.5 min-w-0 px-1 transition-all ${
+                isActive ? "text-primary" : "text-muted-foreground"
               }`}
             >
-              <Icon className="w-4 h-4" />
-              <span className="text-[9px] font-bold tracking-wider uppercase">{item.name}</span>
+              <Icon className="w-[18px] h-[18px] shrink-0" />
+              <span className="text-[8px] font-bold tracking-wide uppercase truncate max-w-[52px] text-center leading-tight">{item.name}</span>
             </Link>
           );
         })}
