@@ -82,6 +82,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [isLoading, session, router]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center gap-4 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/25 animate-bounce">
+          <GraduationCap className="w-7 h-7 text-white" />
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <Loader2 className="w-4 h-4 text-primary animate-spin" />
+          <span className="text-xs font-black text-muted-foreground uppercase tracking-widest text-[#a1a1aa]">
+            Loading Workspace...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   const handleSignOut = async () => {
     try {
       // Force UI to clear even if Supabase API hangs (known bug on corrupted sessions)

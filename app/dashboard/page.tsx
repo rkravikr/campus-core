@@ -27,7 +27,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
-  const { profile, user } = useAuthStore();
+  const { profile, user, isLoading: authLoading, session } = useAuthStore();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [assignments, setAssignments] = useState<AssignmentWithSubject[]>([]);
   const [timetable, setTimetable] = useState<TimetableEntryWithSubject[]>([]);
@@ -103,8 +103,10 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (!authLoading && session) {
+      loadDashboardData();
+    }
+  }, [authLoading, session]);
 
 
 
