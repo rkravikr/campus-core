@@ -287,84 +287,87 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               );
             })}
           </nav>
-        </div>
 
-        {/* User Card, Collapse & Theme Controls */}
-        <div className="space-y-4 pt-4 border-t border-border/60">
-          {/* User Details / Avatar */}
-          <div className={`flex items-center justify-between gap-2 ${isCollapsed ? "flex-col items-center px-0" : "px-2"}`}>
-            {!isCollapsed ? (
-              <div className="flex flex-col text-left truncate max-w-[120px]">
-                <span className="text-xs font-bold text-white truncate">
-                  {profile?.full_name || user?.email?.split("@")[0] || "Student"}
-                </span>
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {profile?.college_name || "College Student"}
-                </span>
-
-                {/* Semester dropdown switcher for expanded mode */}
-                <div className="relative mt-2" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => setIsSemDropdownOpen(!isSemDropdownOpen)}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-[#101014]/60 hover:bg-neutral-900 text-[9px] font-black uppercase tracking-wider text-primary cursor-pointer transition-all select-none group"
-                  >
-                    {isSwitchingSem ? (
-                      <Loader2 className="w-2.5 h-2.5 text-primary animate-spin" />
-                    ) : (
-                      `Sem ${profile?.semester || 1}`
-                    )}
-                    <ChevronDown className="w-2.5 h-2.5 text-muted-foreground group-hover:text-white transition-colors" />
-                  </button>
-
-                  <AnimatePresence>
-                    {isSemDropdownOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 6 }}
-                        transition={{ duration: 0.12 }}
-                        className="absolute left-0 mt-1 w-32 glass-panel rounded-xl border border-border bg-[#0f0f12] p-1 shadow-2xl z-40 overflow-hidden"
-                      >
-                        <div className="text-[8px] font-black uppercase tracking-widest text-muted-foreground px-2 py-1 border-b border-border/40 select-none">
-                          Semester
-                        </div>
-                        <div className="max-h-40 overflow-y-auto py-1 space-y-0.5">
-                          {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
-                            const isActive = (profile?.semester || 1) === sem;
-                            return (
-                              <button
-                                key={sem}
-                                type="button"
-                                onClick={() => handleSemesterSwitch(sem)}
-                                className={`w-full text-left h-7 px-2 rounded-lg text-[10px] font-bold transition-all flex items-center justify-between cursor-pointer ${
-                                  isActive
-                                    ? "bg-primary/10 text-primary"
-                                    : "text-muted-foreground hover:bg-neutral-900/50 hover:text-white"
-                                }`}
-                              >
-                                <span>Sem {sem}</span>
-                                {isActive && <span className="w-1 h-1 rounded-full bg-primary" />}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            ) : (
-              /* Collapsed avatar with click switcher */
-              <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
-                <button 
+          {/* Academic Program / Workspace Switcher section in the middle of sidebar */}
+          {!isCollapsed ? (
+            <div className="px-2 pt-4 border-t border-border/20">
+              <span className="text-[8px] font-black text-muted-foreground/60 uppercase tracking-widest block mb-2 px-1">
+                Academic Program
+              </span>
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
                   onClick={() => setIsSemDropdownOpen(!isSemDropdownOpen)}
-                  className="w-8 h-8 rounded-full bg-primary/15 border border-primary/30 hover:border-primary flex items-center justify-center text-primary text-[10px] font-black shrink-0 cursor-pointer hover:bg-primary/20 transition-all select-none" 
-                  title={`Semester ${profile?.semester || 1} - Click to switch`}
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl border border-border/80 bg-[#101014]/60 hover:bg-neutral-900/80 text-[12px] font-bold text-white cursor-pointer transition-all select-none group"
                 >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                      <BookOpen className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <span className="text-neutral-200">Semester {profile?.semester || 1}</span>
+                  </div>
                   {isSwitchingSem ? (
                     <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
                   ) : (
-                    `S${profile?.semester || 1}`
+                    <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-white transition-colors" />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {isSemDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.12 }}
+                      className="absolute left-0 right-0 mt-1.5 w-full glass-panel rounded-xl border border-border bg-[#0f0f12] p-1 shadow-2xl z-40 overflow-hidden"
+                    >
+                      <div className="text-[8px] font-black uppercase tracking-widest text-muted-foreground px-2.5 py-1.5 border-b border-border/40 select-none">
+                        Switch Semester
+                      </div>
+                      <div className="max-h-40 overflow-y-auto py-1 space-y-0.5">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
+                          const isActive = (profile?.semester || 1) === sem;
+                          return (
+                            <button
+                              key={sem}
+                              type="button"
+                              onClick={() => {
+                                handleSemesterSwitch(sem);
+                                setIsSemDropdownOpen(false);
+                              }}
+                              className={`w-full text-left h-8 px-2.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-between cursor-pointer ${
+                                isActive
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-muted-foreground hover:bg-neutral-900/50 hover:text-white"
+                              }`}
+                            >
+                              <span>Semester {sem}</span>
+                              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          ) : (
+            <div className="pt-4 border-t border-border/20 flex justify-center">
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  onClick={() => setIsSemDropdownOpen(!isSemDropdownOpen)}
+                  className="w-9 h-9 rounded-xl border border-border bg-[#101014]/60 hover:bg-neutral-900/80 flex items-center justify-center text-primary cursor-pointer transition-all select-none group"
+                  title={`Semester ${profile?.semester || 1} - Click to switch`}
+                >
+                  {isSwitchingSem ? (
+                    <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                  ) : (
+                    <span className="text-[11px] font-black text-primary group-hover:scale-105 transition-transform">
+                      S{profile?.semester || 1}
+                    </span>
                   )}
                 </button>
 
@@ -375,7 +378,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 8 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute left-10 bottom-0 w-32 glass-panel rounded-xl border border-border bg-[#0f0f12] p-1 shadow-2xl z-40 overflow-hidden"
+                      className="absolute left-11 top-0 w-32 glass-panel rounded-xl border border-border bg-[#0f0f12] p-1 shadow-2xl z-40 overflow-hidden"
                     >
                       <div className="text-[8px] font-black uppercase tracking-widest text-muted-foreground px-2 py-1 border-b border-border/40 select-none">
                         Semester
@@ -387,7 +390,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             <button
                               key={sem}
                               type="button"
-                              onClick={() => handleSemesterSwitch(sem)}
+                              onClick={() => {
+                                handleSemesterSwitch(sem);
+                                setIsSemDropdownOpen(false);
+                              }}
                               className={`w-full text-left h-7 px-2 rounded-lg text-[10px] font-bold transition-all flex items-center justify-between cursor-pointer ${
                                 isActive
                                   ? "bg-primary/10 text-primary"
@@ -403,6 +409,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     </motion.div>
                   )}
                 </AnimatePresence>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Card, Collapse & Theme Controls */}
+        <div className="space-y-4 pt-4 border-t border-border/60">
+          {/* User Details / Avatar */}
+          <div className={`flex items-center justify-between gap-2 ${isCollapsed ? "flex-col items-center px-0" : "px-2"}`}>
+            {!isCollapsed ? (
+              <div className="flex flex-col text-left truncate max-w-[110px]">
+                <span className="text-xs font-bold text-white truncate">
+                  {profile?.full_name || user?.email?.split("@")[0] || "Student"}
+                </span>
+                <span className="text-[10px] text-muted-foreground truncate">
+                  {profile?.college_name || "College Student"}
+                </span>
+              </div>
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xs font-bold shrink-0 cursor-default" title={profile?.full_name || "Student"}>
+                {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
               </div>
             )}
 
