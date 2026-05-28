@@ -61,18 +61,20 @@ export default function AssignmentCard({
 
   // Priority Styles mapping
   const priorityColors = {
-    High: "bg-destructive/10 text-destructive border-destructive/20",
+    High: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_8px_rgba(239,68,68,0.15)]",
     Medium: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
     Low: "bg-primary/10 text-primary border-primary/20",
   };
 
   return (
-    <div className={`glass-card rounded-xl border p-4 flex flex-col justify-between transition-all relative overflow-hidden ${
+    <div className={`glass-card rounded-[20px] border p-4.5 flex flex-col justify-between transition-all relative overflow-hidden ${
       assignment.completed 
         ? "border-border/40 opacity-70 bg-card/20" 
         : isOverdue 
           ? "border-destructive/30 shadow-md shadow-destructive/5" 
-          : "border-border"
+          : assignment.priority === "High"
+            ? "border-destructive/40 bg-destructive/5/10 shadow-[0_0_12px_rgba(239,68,68,0.02)]"
+            : "border-border"
     }`}>
       
       {/* Top Section: Checkbox, Title & Menu */}
@@ -81,7 +83,7 @@ export default function AssignmentCard({
         <button
           onClick={handleToggle}
           disabled={isToggling}
-          className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors mt-0.5 ${
+          className={`w-5 h-5 rounded-[8px] border flex items-center justify-center shrink-0 transition-colors mt-0.5 ${
             assignment.completed
               ? "bg-primary border-primary text-white"
               : isOverdue
@@ -96,6 +98,8 @@ export default function AssignmentCard({
         <div className="flex-1 text-left min-w-0">
           <h4 className={`text-sm font-bold text-white tracking-wide uppercase truncate ${
             assignment.completed ? "line-through text-muted-foreground font-normal" : ""
+          } ${
+            !assignment.completed && assignment.priority === "High" ? "text-destructive-foreground font-black" : ""
           }`}>
             {assignment.title}
           </h4>
@@ -112,7 +116,7 @@ export default function AssignmentCard({
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-1 rounded-md text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
+            className="p-1 rounded-[8px] text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
           >
             <MoreVertical className="w-4 h-4" />
           </button>
@@ -126,7 +130,7 @@ export default function AssignmentCard({
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
                   transition={{ duration: 0.1 }}
-                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-lg shadow-xl z-40 py-1"
+                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-[12px] shadow-xl z-40 py-1"
                 >
                   <button
                     onClick={() => {
@@ -159,14 +163,14 @@ export default function AssignmentCard({
       <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-border/40">
         {/* Linked Subject Badge */}
         {assignment.subjects && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-border bg-neutral-900 text-muted-foreground text-[9px] font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[12px] border border-border bg-neutral-900 text-muted-foreground text-[9px] font-bold uppercase tracking-wider">
             <BookOpen className="w-3 h-3 text-primary" />
             {assignment.subjects.subject_name}
           </span>
         )}
 
         {/* Priority Rating Badge */}
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider ${
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-[12px] border text-[9px] font-bold uppercase tracking-wider ${
           priorityColors[assignment.priority] || priorityColors.Medium
         }`}>
           {assignment.priority}
@@ -174,8 +178,8 @@ export default function AssignmentCard({
 
         {/* Overdue Badge */}
         {isOverdue && (
-          <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full border border-destructive/20 bg-destructive/10 text-destructive text-[9px] font-bold uppercase tracking-wider animate-pulse">
-            <AlertTriangle className="w-3 h-3" />
+          <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-[12px] border border-destructive/20 bg-destructive/10 text-destructive text-[9px] font-bold uppercase tracking-wider animate-pulse">
+            <AlertTriangle className="w-3.5 h-3.5" />
             Overdue
           </span>
         )}

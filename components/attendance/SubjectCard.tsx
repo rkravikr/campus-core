@@ -80,7 +80,7 @@ export default function SubjectCard({
   const strokeDashoffset = circumference - (stats.percentage / 100) * circumference;
 
   return (
-    <div className="glass-card rounded-xl border border-border p-5 flex flex-col justify-between relative shadow-md overflow-hidden min-h-[220px]">
+    <div className="glass-card rounded-[20px] border border-border p-4.5 flex flex-col justify-between relative shadow-md overflow-hidden min-h-[220px]">
       
       {/* 1. TOP SECTION (Subject Name & Menu) */}
       <div className="flex items-start justify-between gap-3">
@@ -97,7 +97,7 @@ export default function SubjectCard({
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-1 rounded-md text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
+            className="p-1 rounded-[8px] text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
           >
             <MoreVertical className="w-4 h-4" />
           </button>
@@ -114,7 +114,7 @@ export default function SubjectCard({
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
                   transition={{ duration: 0.1 }}
-                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-lg shadow-xl z-40 py-1"
+                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-[12px] shadow-xl z-40 py-1"
                 >
                   <button
                     onClick={() => {
@@ -147,7 +147,7 @@ export default function SubjectCard({
       <div className="my-4 flex items-center justify-between gap-4">
         {/* Warning / Notification text */}
         <div className="flex-1 text-left">
-          <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${activeColors.bg} ${activeColors.border} border mb-2`}>
+          <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[12px] border text-[9px] font-bold uppercase tracking-wider ${activeColors.bg} ${activeColors.border} mb-2`}>
             {stats.status}
           </div>
           <p className="text-xs text-neutral-300 leading-normal max-w-[190px]">
@@ -196,14 +196,14 @@ export default function SubjectCard({
           <button
             onClick={() => handleLog("attended")}
             disabled={isLogging !== null}
-            className="glow-btn flex items-center justify-center h-9 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary hover:text-white text-xs font-semibold transition-all"
+            className="glow-btn flex items-center justify-center h-9 rounded-[16px] bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary hover:text-white text-xs font-semibold transition-all"
           >
             {isLogging === "attended" ? "..." : "+ Attended"}
           </button>
           <button
             onClick={() => handleLog("missed")}
             disabled={isLogging !== null}
-            className="flex items-center justify-center h-9 rounded-lg bg-neutral-900/50 hover:bg-neutral-800/80 border border-border text-neutral-300 hover:text-white text-xs font-semibold transition-all"
+            className="flex items-center justify-center h-9 rounded-[16px] bg-neutral-900/50 hover:bg-neutral-800/80 border border-border text-neutral-300 hover:text-white text-xs font-semibold transition-all"
           >
             {isLogging === "missed" ? "..." : "+ Missed"}
           </button>

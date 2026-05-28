@@ -189,52 +189,52 @@ export default function DashboardPage() {
       <div className="space-y-6">
         
         {/* Dynamic Welcome Header Card */}
-        <div className="glass-card rounded-2xl border border-border p-6 md:p-8 flex flex-col md:flex-row items-start md:items-end justify-between gap-6 relative overflow-hidden text-left min-h-[160px]">
+        <div className="glass-card rounded-[20px] border border-border p-4 md:p-6 flex flex-col md:flex-row items-start md:items-end justify-between gap-4 relative overflow-hidden text-left min-h-[120px] md:min-h-[130px]">
           {/* Subtle Accent Glows */}
           <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full filter blur-[50px] pointer-events-none" />
           <div className="absolute -bottom-10 left-1/3 w-32 h-32 bg-blue-500/5 rounded-full filter blur-[40px] pointer-events-none" />
           
           {/* Live Date, Day & 24h Time Widget */}
-          <div className="absolute top-4 right-4 md:top-6 md:right-6 text-right flex flex-col items-end z-20">
+          <div className="absolute top-3 right-3 md:top-4 md:right-4 text-right flex flex-col items-end z-20">
             {mounted ? (
               <>
-                <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                <span className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                   {dateStr}
                 </span>
-                <span className="text-xs md:text-sm font-mono font-extrabold text-primary tracking-wider mt-1 bg-primary/5 px-2 py-0.5 rounded border border-primary/20">
+                <span className="text-[10px] md:text-xs font-mono font-extrabold text-primary tracking-wider mt-1 bg-primary/5 px-2 py-0.5 rounded-[6px] border border-primary/20">
                   {timeStr}
                 </span>
               </>
             ) : (
               <>
-                <div className="w-24 h-3 bg-muted/20 rounded animate-pulse" />
-                <div className="w-16 h-5 bg-muted/20 rounded animate-pulse mt-1" />
+                <div className="w-20 h-2.5 bg-muted/20 rounded animate-pulse" />
+                <div className="w-14 h-4 bg-muted/20 rounded animate-pulse mt-1" />
               </>
             )}
           </div>
 
-          <div className="space-y-2 z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3 animate-pulse" />
+          <div className="space-y-1 z-10">
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[12px] border border-primary/20 bg-primary/5 text-primary text-[9px] font-bold uppercase tracking-wider">
+              <Sparkles className="w-2.5 h-2.5 animate-pulse" />
               Workspace Active
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">
+            <h2 className="text-xl md:text-2xl font-black text-white leading-tight">
               {mounted ? greeting : "Welcome"}, <span className="bg-gradient-to-r from-white via-primary to-blue-400 bg-clip-text text-transparent">{studentFirstName}</span>!
             </h2>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               Ready to coordinate your academic deliverables.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 z-10 flex-wrap">
-            <span className="text-[10px] text-muted-foreground px-3 py-1 rounded-full border border-border bg-card/60 font-semibold tracking-wider uppercase">
+          <div className="flex items-center gap-2 shrink-0 z-10 flex-wrap">
+            <span className="text-[9px] text-muted-foreground px-2.5 py-0.5 rounded-[12px] border border-border bg-card/60 font-bold tracking-wider uppercase">
               {profile?.course || "Undergrad Program"}
             </span>
-            <span className="text-[10px] text-primary px-3 py-1 rounded-full border border-primary/20 bg-primary/5 font-extrabold tracking-wider uppercase">
+            <span className="text-[9px] text-primary px-2.5 py-0.5 rounded-[12px] border border-primary/20 bg-primary/5 font-black tracking-wider uppercase">
               Sem {profile?.semester || "1"}
             </span>
-            <Link href="/docs" className="text-[10px] text-muted-foreground hover:text-primary px-3 py-1 rounded-full border border-border hover:border-primary/30 bg-card/60 hover:bg-primary/5 font-semibold tracking-wider uppercase transition-all">
-              Read V1 Docs
+            <Link href="/docs" className="text-[9px] text-muted-foreground hover:text-primary px-2.5 py-0.5 rounded-[12px] border border-border hover:border-primary/30 bg-card/60 hover:bg-primary/5 font-bold tracking-wider uppercase transition-all">
+              Docs
             </Link>
           </div>
         </div>
@@ -243,12 +243,12 @@ export default function DashboardPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-card/20 rounded-xl border border-border animate-pulse" />
+              <div key={i} className="h-32 bg-card/20 rounded-[20px] border border-border animate-pulse" />
             ))}
           </div>
         ) : error ? (
-          <div className="flex items-start gap-2.5 p-4 rounded-xl border border-destructive/20 bg-destructive/10 text-xs text-destructive-foreground">
-            <AlertCircle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2 p-3.5 rounded-[16px] border border-destructive/20 bg-destructive/10 text-[11px] text-destructive-foreground">
+            <AlertCircle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         ) : (
@@ -258,24 +258,24 @@ export default function DashboardPage() {
               
               {/* Attendance Snap */}
               <Link href="/attendance" className="group">
-                <div className="glass-card rounded-xl border border-border p-5 h-full flex flex-col justify-between hover:border-primary/20 transition-all text-left">
+                <div className="glass-card rounded-[20px] border border-border p-4.5 h-full flex flex-col justify-between hover:border-primary/20 transition-all text-left">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                       Attendance Health
                     </span>
-                    <Percent className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <Percent className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <div className="my-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-extrabold text-white">
+                  <div className="my-2.5">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl font-extrabold text-white">
                         {attendancePercentage.toFixed(1)}%
                       </span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${attHealth.color}`}>
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-[8px] border uppercase tracking-wider ${attHealth.color}`}>
                         {attHealth.status}
                       </span>
                     </div>
                     {/* Linear progress track */}
-                    <div className="w-full bg-border/40 h-1.5 rounded-full overflow-hidden mt-2">
+                    <div className="w-full bg-border/40 h-1 rounded-full overflow-hidden mt-1.5">
                       <div 
                         className={`h-full rounded-full transition-all ${
                           attendancePercentage >= 75 ? "bg-primary" : "bg-destructive"
@@ -283,6 +283,26 @@ export default function DashboardPage() {
                         style={{ width: `${Math.min(100, attendancePercentage)}%` }} 
                       />
                     </div>
+                    {/* Bunk Prediction Insight */}
+                    <p className="text-[10px] text-muted-foreground mt-2 font-medium">
+                      {attendancePercentage >= 75 ? (
+                        <>
+                          You can safely miss{" "}
+                          <span className="text-emerald-400 font-extrabold">
+                            {Math.max(0, Math.floor((totalAttended / 0.75) - totalHeld))}
+                          </span>{" "}
+                          more class{Math.floor((totalAttended / 0.75) - totalHeld) === 1 ? "" : "es"}.
+                        </>
+                      ) : (
+                        <>
+                          Attend next{" "}
+                          <span className="text-destructive font-extrabold">
+                            {Math.max(0, Math.ceil((0.75 * totalHeld - totalAttended) / 0.25))}
+                          </span>{" "}
+                          class{Math.ceil((0.75 * totalHeld - totalAttended) / 0.25) === 1 ? "" : "es"} to hit 75%.
+                        </>
+                      )}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground group-hover:text-white transition-colors pt-1">
                     <span>Manage lectures</span>
@@ -293,16 +313,16 @@ export default function DashboardPage() {
 
               {/* CGPA Snap */}
               <Link href="/cgpa" className="group">
-                <div className="glass-card rounded-xl border border-border p-5 h-full flex flex-col justify-between hover:border-primary/20 transition-all text-left">
+                <div className="glass-card rounded-[20px] border border-border p-4.5 h-full flex flex-col justify-between hover:border-primary/20 transition-all text-left">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                       Academic Progress
                     </span>
-                    <Award className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <Award className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <div className="my-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-extrabold text-white">
+                  <div className="my-2.5">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl font-extrabold text-white">
                         {overallCgpa.toFixed(2)}
                       </span>
                       <span className="text-[9px] font-extrabold text-primary uppercase tracking-wider flex items-center gap-0.5">
@@ -322,27 +342,31 @@ export default function DashboardPage() {
 
               {/* Assignments Snap */}
               <Link href="/assignments" className="group">
-                <div className="glass-card rounded-xl border border-border p-5 h-full flex flex-col justify-between hover:border-primary/20 transition-all text-left">
+                <div className={`glass-card rounded-[20px] border p-4.5 h-full flex flex-col justify-between transition-all text-left ${
+                  overdueCount > 0 
+                    ? "border-destructive/20 hover:border-destructive/40 shadow-[0_0_12px_rgba(239,68,68,0.03)]" 
+                    : "border-border hover:border-primary/20"
+                }`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                       Coursework Load
                     </span>
-                    <CheckSquare className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <CheckSquare className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <div className="my-3">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-extrabold text-white">
+                  <div className="my-2.5">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl font-extrabold text-white">
                         {pendingAssignments.length}
                       </span>
                       <span className="text-[10px] text-muted-foreground font-semibold">Pending tasks</span>
                     </div>
                     {overdueCount > 0 ? (
-                      <span className="text-[9px] font-bold text-destructive px-1.5 py-0.5 rounded border border-destructive/20 bg-destructive/10 uppercase tracking-widest block w-max mt-2 flex items-center gap-1 animate-pulse">
-                        <AlertCircle className="w-3 h-3" />
+                      <span className="text-[8px] font-bold text-destructive px-1.5 py-0.5 rounded-[6px] border border-destructive/20 bg-destructive/10 uppercase tracking-widest block w-max mt-2 flex items-center gap-1 animate-pulse">
+                        <AlertCircle className="w-2.5 h-2.5" />
                         {overdueCount} Overdue Alert{overdueCount === 1 ? "" : "s"}
                       </span>
                     ) : (
-                      <span className="text-[9px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 uppercase tracking-widest block w-max mt-2">
+                      <span className="text-[8px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-[6px] border border-emerald-500/20 uppercase tracking-widest block w-max mt-2">
                         Zero Overdue Tasks
                       </span>
                     )}

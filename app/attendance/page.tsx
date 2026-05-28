@@ -115,7 +115,7 @@ export default function AttendancePage() {
           
           <button
             onClick={() => setIsAddOpen(true)}
-            className="glow-btn inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-primary hover:bg-primary/95 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors shrink-0"
+            className="glow-btn inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-[16px] bg-primary hover:bg-primary/95 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
             Add Subject
@@ -133,10 +133,10 @@ export default function AttendancePage() {
         {/* Loading state skeleton panels */}
         {isLoading ? (
           <div className="space-y-6">
-            <div className="h-28 w-full bg-card/20 rounded-xl border border-border animate-pulse" />
+            <div className="h-28 w-full bg-card/20 rounded-[20px] border border-border animate-pulse" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-[220px] bg-card/20 rounded-xl border border-border animate-pulse" />
+                <div key={i} className="h-[220px] bg-card/20 rounded-[20px] border border-border animate-pulse" />
               ))}
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function AttendancePage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-card rounded-xl border border-border p-12 text-center flex flex-col items-center justify-center max-w-xl mx-auto my-12"
+            className="glass-card rounded-[20px] border border-border p-12 text-center flex flex-col items-center justify-center max-w-xl mx-auto my-12"
           >
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 shadow-inner">
               <BookOpen className="w-5 h-5" />
@@ -159,7 +159,7 @@ export default function AttendancePage() {
             </p>
             <button
               onClick={() => setIsAddOpen(true)}
-              className="glow-btn h-10 px-5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors"
+              className="glow-btn h-10 px-5 rounded-[16px] bg-primary hover:bg-primary/90 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors"
             >
               Add Your First Subject
             </button>
@@ -172,7 +172,7 @@ export default function AttendancePage() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-card rounded-xl border border-border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              className="glass-card rounded-[20px] border border-border p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
             >
               <div className="flex items-center gap-4 text-left">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">

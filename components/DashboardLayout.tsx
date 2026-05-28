@@ -131,21 +131,24 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   const navItems = [
-    { name: "Home", href: "/dashboard", icon: Home },
-    { name: "Attendance", href: "/attendance", icon: Percent },
-    { name: "Assignments", href: "/assignments", icon: CheckSquare },
-    { name: "Timetable", href: "/timetable", icon: Clock },
-    { name: "CGPA", href: "/cgpa", icon: GraduationCap },
-    { name: "Profile", href: "/profile", icon: User },
+    { name: "Home", href: "/dashboard", icon: Home, mobileName: "Home" },
+    { name: "Attendance", href: "/attendance", icon: Percent, mobileName: "Attend" },
+    { name: "Assignments", href: "/assignments", icon: CheckSquare, mobileName: "Tasks" },
+    { name: "Timetable", href: "/timetable", icon: Clock, mobileName: "Table" },
+    { name: "CGPA", href: "/cgpa", icon: GraduationCap, mobileName: "CGPA" },
+    { name: "Profile", href: "/profile", icon: User, mobileName: "Profile" },
   ];
 
   // Show premium loading splash screen while loading session
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-foreground">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <span className="text-xs font-bold tracking-widest text-muted-foreground uppercase">
+      <div className="min-h-screen bg-[#09090b] flex flex-col items-center justify-center gap-4 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/25 animate-bounce">
+          <GraduationCap className="w-7 h-7 text-white" />
+        </div>
+        <div className="flex items-center gap-2 mt-2">
+          <Loader2 className="w-4 h-4 text-primary animate-spin" />
+          <span className="text-xs font-black text-muted-foreground uppercase tracking-widest text-[#a1a1aa]">
             Loading Workspace...
           </span>
         </div>
@@ -161,7 +164,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       
       {/* 1. DESKTOP SIDEBAR (Visible on md and above) */}
       <aside className={`hidden md:flex flex-col border-r border-border bg-card/45 backdrop-blur-xl h-screen sticky top-0 justify-between py-6 px-4 shrink-0 z-20 transition-all duration-300 ${
-        isCollapsed ? "w-[72px]" : "w-64"
+        isCollapsed ? "w-[72px]" : "w-[240px]"
       }`}>
         <div className="space-y-8">
           {/* Logo / Brand */}
@@ -170,7 +173,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <GraduationCap className="w-4 h-4 text-white" />
             </div>
             {!isCollapsed && (
-              <span className="font-black text-[1.3rem] tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
+              <span className="font-black text-[1.2rem] tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                 CAMPUS<span className="text-primary">CORE</span>
               </span>
             )}
@@ -185,17 +188,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 h-10 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all ${
-                    isCollapsed ? "justify-center px-0" : ""
-                  } ${
-                    isActive
-                      ? "bg-primary/10 text-primary border-l-2 border-primary font-extrabold"
-                      : "text-muted-foreground hover:text-white hover:bg-neutral-900/40"
+                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-bold transition-all relative ${
+                    isActive 
+                      ? "bg-primary/10 text-primary shadow-sm shadow-primary/5" 
+                      : "text-muted-foreground hover:bg-neutral-900/30 hover:text-white"
                   }`}
-                  title={isCollapsed ? item.name : undefined}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   {!isCollapsed && <span>{item.name}</span>}
+                  {isActive && (
+                    <span className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-primary rounded-r-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                  )}
                 </Link>
               );
             })}
@@ -207,7 +210,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* User Details / Avatar */}
           <div className={`flex items-center justify-between gap-2 ${isCollapsed ? "flex-col items-center px-0" : "px-2"}`}>
             {!isCollapsed ? (
-              <div className="flex flex-col text-left truncate max-w-[130px]">
+              <div className="flex flex-col text-left truncate max-w-[110px]">
                 <span className="text-xs font-bold text-white truncate">
                   {profile?.full_name || user?.email?.split("@")[0] || "Student"}
                 </span>
@@ -304,7 +307,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               }`}
             >
               <Icon className="w-[18px] h-[18px] shrink-0" />
-              <span className="text-[8px] font-bold tracking-wide uppercase truncate max-w-[52px] text-center leading-tight">{item.name}</span>
+              <span className="text-[8px] font-bold tracking-wide uppercase truncate max-w-[52px] text-center leading-tight">{(item as any).mobileName || item.name}</span>
             </Link>
           );
         })}

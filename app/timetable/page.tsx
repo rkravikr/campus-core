@@ -124,7 +124,7 @@ export default function TimetablePage() {
           
           <button
             onClick={() => setIsAddOpen(true)}
-            className="glow-btn inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-primary hover:bg-primary/95 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors shrink-0"
+            className="glow-btn inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-[16px] bg-primary hover:bg-primary/95 text-white text-xs font-semibold shadow-md shadow-primary/10 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
             Add Class Slot
@@ -142,10 +142,10 @@ export default function TimetablePage() {
         {/* Loading state skeleton */}
         {isLoading ? (
           <div className="space-y-6">
-            <div className="h-14 w-full bg-card/20 rounded-xl border border-border animate-pulse md:hidden" />
+            <div className="h-14 w-full bg-card/20 rounded-[16px] border border-border animate-pulse md:hidden" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-card/20 rounded-xl border border-border animate-pulse" />
+                <div key={i} className="h-32 bg-card/20 rounded-[20px] border border-border animate-pulse" />
               ))}
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function TimetablePage() {
                 return (
                   <div key={day} className="flex flex-col gap-4">
                     {/* Column Header */}
-                    <div className={`p-2 rounded-lg border text-center transition-colors ${
+                    <div className={`p-2 rounded-[16px] border text-center transition-colors ${
                       isToday
                         ? "bg-primary/10 border-primary text-primary"
                         : "bg-card/20 border-border/60 text-muted-foreground"
@@ -238,9 +238,9 @@ export default function TimetablePage() {
                     </div>
 
                     {/* Classes Grid Listing */}
-                    <div className="space-y-3 flex-1 min-h-[400px] bg-neutral-900/10 rounded-lg p-1.5 border border-border/20">
+                    <div className="space-y-3 flex-1 min-h-[400px] bg-neutral-900/10 rounded-[20px] p-1.5 border border-border/20">
                       {dayClasses.length === 0 ? (
-                        <div className="h-full flex items-center justify-center p-4 border border-dashed border-border/20 rounded-md text-[10px] text-muted-foreground/30 text-center uppercase tracking-wider">
+                        <div className="h-full flex items-center justify-center p-4 border border-dashed border-border/20 rounded-[12px] text-[10px] text-muted-foreground/30 text-center uppercase tracking-wider">
                           Free
                         </div>
                       ) : (

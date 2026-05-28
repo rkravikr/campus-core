@@ -170,19 +170,19 @@ export default function AssignmentsPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-3 gap-4">
               {/* Stat 1: Pending */}
-              <div className="glass-card rounded-xl border border-border p-4 text-left">
+              <div className="glass-card rounded-[20px] border border-border p-4 text-left">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Pending Tasks</span>
                 <span className="text-xl font-black text-white mt-1 block">{totalPending}</span>
               </div>
               
               {/* Stat 2: Completed */}
-              <div className="glass-card rounded-xl border border-border p-4 text-left">
+              <div className="glass-card rounded-[20px] border border-border p-4 text-left">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Completed</span>
                 <span className="text-xl font-black text-white mt-1 block">{totalCompleted}</span>
               </div>
 
               {/* Stat 3: Overdue */}
-              <div className={`glass-card rounded-xl border p-4 text-left ${
+              <div className={`glass-card rounded-[20px] border p-4 text-left ${
                 totalOverdue > 0 ? "border-destructive/30 bg-destructive/5" : "border-border"
               }`}>
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Overdue</span>
@@ -193,14 +193,14 @@ export default function AssignmentsPage() {
             </div>
 
             {/* Interactive Filters Panel */}
-            <div className="glass-card rounded-xl border border-border p-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="glass-card rounded-[20px] border border-border p-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
               {/* Status Segment Buttons */}
-              <div className="flex p-0.5 rounded-lg bg-background/50 border border-border max-w-xs">
+              <div className="flex p-0.5 rounded-[12px] bg-background/50 border border-border max-w-xs">
                 {(["Pending", "Completed", "All"] as StatusFilter[]).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setStatusFilter(tab)}
-                    className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                    className={`px-3 py-1.5 rounded-[10px] text-[10px] font-bold uppercase tracking-wider transition-colors ${
                       statusFilter === tab
                         ? "bg-primary text-white"
                         : "text-muted-foreground hover:text-white"
@@ -219,7 +219,7 @@ export default function AssignmentsPage() {
                   <select
                     value={priorityFilter}
                     onChange={(e) => setPriorityFilter(e.target.value as PriorityFilter)}
-                    className="h-9 px-3 rounded-lg border border-border bg-[#101014] text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer"
+                    className="h-9 px-3 rounded-[14px] border border-border bg-[#101014] text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer"
                   >
                     <option value="All">All Priorities</option>
                     <option value="High">High Priority</option>
@@ -234,7 +234,7 @@ export default function AssignmentsPage() {
                   <select
                     value={subjectFilter}
                     onChange={(e) => setSubjectFilter(e.target.value)}
-                    className="h-9 px-3 rounded-lg border border-border bg-[#101014] text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer max-w-[150px]"
+                    className="h-9 px-3 rounded-[14px] border border-border bg-[#101014] text-xs focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer max-w-[150px]"
                   >
                     <option value="All">All Subjects</option>
                     {subjects.map((sub) => (

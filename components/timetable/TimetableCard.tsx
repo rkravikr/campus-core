@@ -29,7 +29,7 @@ export default function TimetableCard({
   };
 
   return (
-    <div className="glass-card rounded-xl border border-border p-4 flex flex-col justify-between relative shadow-sm hover:border-primary/20 transition-all text-left">
+    <div className="glass-card rounded-[20px] border border-border p-4 flex flex-col justify-between relative shadow-sm hover:border-primary/20 transition-all text-left">
       <div className="flex items-start justify-between gap-3">
         {/* Class Hours */}
         <div className="flex items-center gap-1.5 text-xs text-primary font-bold uppercase tracking-wider">
@@ -43,7 +43,7 @@ export default function TimetableCard({
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-1 rounded-md text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
+            className="p-1 rounded-[8px] text-muted-foreground hover:text-white hover:bg-neutral-900 transition-colors"
           >
             <MoreVertical className="w-3.5 h-3.5" />
           </button>
@@ -57,7 +57,7 @@ export default function TimetableCard({
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -5 }}
                   transition={{ duration: 0.1 }}
-                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-lg shadow-xl z-40 py-1"
+                  className="absolute right-0 mt-1 w-32 bg-[#101014] border border-border rounded-[12px] shadow-xl z-40 py-1"
                 >
                   <button
                     onClick={() => {
