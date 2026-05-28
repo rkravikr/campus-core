@@ -255,9 +255,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="space-y-8">
           {/* Logo / Brand */}
           <div className={`flex items-center gap-2.5 px-2 ${isCollapsed ? "justify-center px-0" : ""}`}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-              <GraduationCap className="w-4 h-4 text-white" />
-            </div>
+            <img src="/logo.svg" alt="Campus Core" className="w-8 h-8 object-contain shrink-0" />
             {!isCollapsed && (
               <span className="font-black text-[1.2rem] tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
                 CAMPUS<span className="text-primary">CORE</span>
@@ -493,9 +491,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* 2. MOBILE HEADER & NAVIGATION (Visible on mobile only) */}
       <div className="md:hidden w-full flex items-center justify-between h-14 border-b border-border px-4 sticky top-0 bg-background/80 backdrop-blur-lg z-20">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20">
-            <GraduationCap className="w-3.5 h-3.5 text-white" />
-          </div>
+          <img src="/logo.svg" alt="Campus Core" className="w-7 h-7 object-contain shrink-0" />
           <span className="font-black text-[1.3rem] tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
             CAMPUS<span className="text-primary">CORE</span>
           </span>

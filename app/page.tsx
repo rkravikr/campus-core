@@ -55,16 +55,14 @@ export default function Home() {
       {/* Header / Brand */}
       <header className="w-full max-w-5xl flex items-center justify-between z-10">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20">
-            <GraduationCap className="w-4 h-4 text-white" />
-          </div>
+          <img src="/logo.svg" alt="Campus Core" className="w-8 h-8 object-contain shrink-0" />
           <span className="font-semibold text-lg tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
             CAMPUS<span className="text-primary font-bold">CORE</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground px-2.5 py-1 rounded-full border border-border bg-card/50">
-            v1.0.0 Stable
+            v1.1.0 Stable
           </span>
           <a
             href="https://github.com/rkravikr/campus-core"
