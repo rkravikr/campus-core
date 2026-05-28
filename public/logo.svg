@@ -1,101 +1,104 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
-  <!-- Definitions for Gradients and Glow Filters -->
+  <!-- Definitions for High-End Gradients and Filters -->
   <defs>
-    <!-- Background Gradient -->
+    <!-- Background Radial Glow -->
     <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-      <stop offset="0%" stop-color="#1e1b4b" stop-opacity="0.6"/>
+      <stop offset="0%" stop-color="#18153c" stop-opacity="0.6"/>
       <stop offset="100%" stop-color="#09090b" stop-opacity="1"/>
     </radialGradient>
 
-    <!-- Brand Primary Gradient (Blue to Purple) -->
-    <linearGradient id="primary-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6"/>
-      <stop offset="50%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
+    <!-- Left 'C' Gradient (Cyan to Indigo) -->
+    <linearGradient id="left-c-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#4facfe"/>
     </linearGradient>
 
-    <!-- Core Nucleus Gradient (Purple to Pink) -->
-    <linearGradient id="core-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#8b5cf6"/>
-      <stop offset="100%" stop-color="#ec4899"/>
+    <!-- Right 'C' Gradient (Stellar Purple to Neon Pink) -->
+    <linearGradient id="right-c-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b152ff"/>
+      <stop offset="100%" stop-color="#ff2a85"/>
     </linearGradient>
 
-    <!-- Accent Orbital Ring Gradient -->
-    <linearGradient id="orbit-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1"/>
-      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.8"/>
-      <stop offset="100%" stop-color="#ec4899" stop-opacity="0.1"/>
+    <!-- Central Core Star Glow -->
+    <linearGradient id="core-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#ff2a85"/>
     </linearGradient>
 
-    <!-- Intense Central Glow Filter -->
-    <filter id="core-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="16" result="blur"/>
+    <!-- Premium Glow Filters -->
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
-    
-    <!-- Subtler Ambient Glow Filter -->
+
     <filter id="ambient-glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="40" result="blur"/>
+      <feGaussianBlur stdDeviation="45" result="blur"/>
     </filter>
   </defs>
 
-  <!-- Deep Workspace Background -->
+  <!-- Deep Velvet Tech Background -->
   <rect width="512" height="512" rx="112" fill="#09090b"/>
   <rect width="512" height="512" rx="112" fill="url(#bg-glow)"/>
-  
-  <!-- Subtle Grid Pattern / Tech Accents -->
-  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
+
+  <!-- Subtle High-Tech Measurement Grid -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1.5">
+    <circle cx="256" cy="256" r="200" stroke-dasharray="6 12"/>
+    <circle cx="256" cy="256" r="140" stroke-dasharray="3 9"/>
     <line x1="256" y1="0" x2="256" y2="512"/>
     <line x1="0" y1="256" x2="512" y2="256"/>
-    <circle cx="256" cy="256" r="180" stroke-dasharray="4 8"/>
-    <circle cx="256" cy="256" r="230" stroke-dasharray="2 12"/>
   </g>
 
-  <!-- Ambient Light Leak behind the Logo -->
-  <circle cx="256" cy="256" r="100" fill="url(#core-grad)" opacity="0.25" filter="url(#ambient-glow)"/>
+  <!-- Giant Ambient Colorful Aura -->
+  <circle cx="200" cy="256" r="80" fill="#00f2fe" opacity="0.12" filter="url(#ambient-glow)"/>
+  <circle cx="312" cy="256" r="80" fill="#ff2a85" opacity="0.12" filter="url(#ambient-glow)"/>
 
-  <!-- High-Tech Orbital Ring -->
-  <circle cx="256" cy="256" r="160" stroke="url(#orbit-grad)" stroke-width="3" stroke-dasharray="12 6" transform="rotate(-30 256 256)"/>
-  
-  <!-- Outer Satellite Nodes -->
-  <circle cx="256" cy="96" r="6" fill="#3b82f6" filter="url(#core-glow)"/>
-  <circle cx="256" cy="416" r="6" fill="#ec4899" filter="url(#core-glow)"/>
+  <!-- Left 'C' - Campus (Cyan to Blue Ribbon) -->
+  <path d="M 310,150 C 190,150 146,200 146,256 C 146,312 190,362 310,362" 
+        stroke="url(#left-c-grad)" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        filter="url(#neon-glow)"
+        opacity="0.95"
+  />
 
-  <!-- Main Isometric Geometric Cap / Campus Structure -->
-  <!-- Back Diamond Facet -->
-  <polygon points="256,120 390,185 256,250 122,185" fill="#1e1b4b" fill-opacity="0.4" stroke="url(#primary-grad)" stroke-width="2"/>
-  
-  <!-- Right Lower Facet -->
-  <polygon points="256,250 390,185 390,215 256,280" fill="url(#primary-grad)" opacity="0.15"/>
-  <path d="M390,185 L390,215 L256,280" stroke="url(#primary-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Left Lower Facet -->
-  <polygon points="256,250 122,185 122,215 256,280" fill="url(#primary-grad)" opacity="0.3"/>
-  <path d="M122,185 L122,215 L256,280" stroke="url(#primary-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Inner Portal Ring (Connecting Cap & Core) -->
-  <ellipse cx="256" cy="250" rx="64" ry="32" stroke="url(#primary-grad)" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6"/>
+  <!-- Right 'C' - Core (Violet to Pink Ribbon) Interlocking Overlap -->
+  <path d="M 366,150 C 246,150 202,200 202,256 C 202,312 246,362 366,362" 
+        stroke="url(#right-c-grad)" 
+        stroke-width="36" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        filter="url(#neon-glow)"
+        opacity="0.9"
+  />
 
-  <!-- Hanging Graduation Tassel (Futuristic Light Beam) -->
-  <path d="M256,185 L100,260 L100,320" stroke="url(#core-grad)" stroke-width="2" stroke-dasharray="4 4" fill="none" opacity="0.7"/>
-  <circle cx="100" cy="320" r="4" fill="#ec4899" filter="url(#core-glow)"/>
+  <!-- High-Light Overlap Accent / Intersection Glow -->
+  <!-- A subtle overlapping crescent to add dimension -->
+  <path d="M 230,200 C 212,220 202,238 202,256 C 202,274 212,292 230,312" 
+        stroke="#ffffff" 
+        stroke-width="6" 
+        stroke-linecap="round" 
+        fill="none"
+        opacity="0.4"
+  />
 
-  <!-- The "Core" - Glowing Suspended Central Nucleus -->
-  <!-- Outer Glow Aura -->
-  <polygon points="256,200 296,250 256,300 216,250" fill="url(#core-grad)" opacity="0.3" filter="url(#core-glow)"/>
-  
-  <!-- Sharp Isometric Diamond Nucleus -->
-  <polygon points="256,210 286,250 256,290 226,250" fill="url(#core-grad)"/>
-  
-  <!-- Core Highlight / Inner Reflection -->
-  <polygon points="256,210 271,250 256,290 256,250" fill="#ffffff" opacity="0.4"/>
-  
-  <!-- Central Energy Emitters -->
-  <line x1="256" y1="210" x2="256" y2="150" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#core-glow)"/>
-  <line x1="256" y1="290" x2="256" y2="350" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#core-glow)"/>
+  <!-- Central Academic Core - Glowing 4-Point Starburst -->
+  <!-- Outer Glow Halo -->
+  <g transform="translate(256, 256)" filter="url(#neon-glow)">
+    <path d="M 0,-36 Q 0,0 36,0 Q 0,0 0,36 Q 0,0 -36,0 Q 0,0 0,-36 Z" 
+          fill="url(#core-glow-grad)"
+          opacity="0.9"
+    />
+    <!-- Hyper-bright core nucleus -->
+    <path d="M 0,-16 Q 0,0 16,0 Q 0,0 0,16 Q 0,0 -16,0 Q 0,0 0,-16 Z" 
+          fill="#ffffff"
+    />
+  </g>
 
-  <!-- Modern Subtle Branding tag at the bottom (optional display asset) -->
-  <text x="256" y="460" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="900" letter-spacing="8" fill="#ffffff" opacity="0.6" text-anchor="middle">
+  <!-- Modern Elegant Wordmark Tag at the bottom -->
+  <text x="256" y="455" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="900" letter-spacing="9" fill="#ffffff" opacity="0.55" text-anchor="middle">
     CAMPUS CORE
   </text>
 </svg>
