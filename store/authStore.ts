@@ -34,25 +34,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     const user = session.user;
     
-    // Only block the UI and fetch if profile is not already in memory
+    // Set session immediately and unblock auth loading
+    set({ session, user, isLoading: false, error: null });
+
+    // Fetch profile in the background asynchronously
     if (!get().profile) {
-      set({ session, user, isLoading: true, error: null });
       try {
         await get().fetchProfile(user.id);
       } catch (err: any) {
-        set({ error: err.message || "Failed to load profile", isLoading: false });
+        console.error("Failed to load user profile in background:", err);
       }
-    } else {
-      set({ session, user, isLoading: false, error: null });
     }
   },
 
   fetchProfile: async (userId) => {
     try {
       const profile = await authService.getUserProfile(userId);
-      set({ profile, isLoading: false });
+      set({ profile });
     } catch (err: any) {
-      set({ error: err.message || "Failed to load profile", isLoading: false });
+      set({ error: err.message || "Failed to load profile" });
     }
   },
 
@@ -86,9 +86,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: any, session: any) => {
+      (event: any, session: any) => {
         if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          await get().setSession(session);
+          get().setSession(session);
         } else if (event === "SIGNED_OUT") {
           get().clearSession();
         }
