@@ -17,10 +17,15 @@ import {
   Sun,
   Moon,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  Plus,
+  BookOpen,
+  Command
 } from "lucide-react";
 import Link from "next/link";
 import { authService } from "@/services/auth.service";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Quick Actions & Keyboard Palette imports
 import CommandPalette from "@/components/CommandPalette";
@@ -43,6 +48,33 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isAddAssignmentOpen, setIsAddAssignmentOpen] = useState(false);
   const [isQuickAttendanceOpen, setIsQuickAttendanceOpen] = useState(false);
+
+  // Semester dropdown switcher states
+  const [isSemDropdownOpen, setIsSemDropdownOpen] = useState(false);
+  const [isSwitchingSem, setIsSwitchingSem] = useState(false);
+
+  // Mobile quick actions landscape menu open state
+  const [isMobileActionsOpen, setIsMobileActionsOpen] = useState(false);
+
+  // Click outside to close the semester dropdown automatically
+  useEffect(() => {
+    if (!isSemDropdownOpen) return;
+    const handleOutsideClick = () => {
+      setIsSemDropdownOpen(false);
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, [isSemDropdownOpen]);
+
+  // Click outside to close the mobile actions landscape menu automatically
+  useEffect(() => {
+    if (!isMobileActionsOpen) return;
+    const handleOutsideClick = () => {
+      setIsMobileActionsOpen(false);
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, [isMobileActionsOpen]);
 
   // Listen globally to Ctrl+K or Cmd+K to launch the Command Palette!
   useEffect(() => {
@@ -106,7 +138,20 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     localStorage.setItem("sidebar-collapsed", String(nextCollapse));
   };
   
-  const { user, profile, isLoading, session, initialize } = useAuthStore();
+  const { user, profile, isLoading, session, initialize, fetchProfile } = useAuthStore();
+
+  const handleSemesterSwitch = async (selectedSem: number) => {
+    if (!user || isSwitchingSem) return;
+    setIsSwitchingSem(true);
+    try {
+      await authService.updateProfile(user.id, { semester: selectedSem });
+      await fetchProfile(user.id);
+    } catch (err) {
+      console.error("Failed to update semester:", err);
+    } finally {
+      setIsSwitchingSem(false);
+    }
+  };
 
   // Initialize auth store listeners on layout mount
   useEffect(() => {
@@ -206,16 +251,75 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         isCollapsed ? "w-[72px]" : "w-[240px]"
       }`}>
         <div className="space-y-8">
-          {/* Logo / Brand */}
-          <div className={`flex items-center gap-2.5 px-2 ${isCollapsed ? "justify-center px-0" : ""}`}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-              <GraduationCap className="w-4 h-4 text-white" />
-            </div>
-            {!isCollapsed && (
-              <span className="font-black text-[1.2rem] tracking-wider bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
-                CAMPUS<span className="text-primary">CORE</span>
-              </span>
-            )}
+          {/* Workspace Banner / Semester Selector */}
+          <div className="relative px-1 z-30" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setIsSemDropdownOpen(!isSemDropdownOpen)}
+              className={`w-full flex items-center gap-2.5 p-2 rounded-xl border border-border bg-[#101014]/40 hover:bg-neutral-900/40 text-left transition-all cursor-pointer group select-none ${
+                isCollapsed ? "justify-center p-1.5" : "justify-between"
+              }`}
+              title={isCollapsed ? `Semester ${profile?.semester || 1}` : "Switch Workspace Semester"}
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+                  {isSwitchingSem ? (
+                    <Loader2 className="w-4 h-4 text-white animate-spin" />
+                  ) : (
+                    <GraduationCap className="w-4 h-4 text-white" />
+                  )}
+                </div>
+                {!isCollapsed && (
+                  <div className="flex flex-col text-left truncate">
+                    <span className="font-extrabold text-[11px] tracking-wider text-white uppercase leading-none">
+                      Campus Core
+                    </span>
+                    <span className="text-[10px] text-primary font-black uppercase flex items-center gap-0.5 mt-1.5 leading-none">
+                      Sem {profile?.semester || 1}
+                      <ChevronDown className="w-3 h-3 text-muted-foreground group-hover:text-white transition-colors" />
+                    </span>
+                  </div>
+                )}
+              </div>
+            </button>
+
+            {/* Premium Dropdown List */}
+            <AnimatePresence>
+              {isSemDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className={`absolute left-0 right-0 mt-2 glass-panel rounded-[16px] border border-border bg-[#0f0f12] p-1.5 shadow-2xl z-40 overflow-hidden ${
+                    isCollapsed ? "w-40 -right-28" : "w-full"
+                  }`}
+                >
+                  <div className="text-[9px] font-black uppercase tracking-wider text-muted-foreground px-2.5 py-1.5 border-b border-border/40 select-none">
+                    Select Semester
+                  </div>
+                  <div className="max-h-60 overflow-y-auto py-1 space-y-0.5">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
+                      const isActive = (profile?.semester || 1) === sem;
+                      return (
+                        <button
+                          key={sem}
+                          type="button"
+                          onClick={() => handleSemesterSwitch(sem)}
+                          className={`w-full text-left h-8 px-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                            isActive
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:bg-neutral-900/50 hover:text-white"
+                          }`}
+                        >
+                          <span>Semester {sem}</span>
+                          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Navigation Links */}
@@ -312,6 +416,57 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Mobile Semester Selector Dropdown */}
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setIsSemDropdownOpen(!isSemDropdownOpen)}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border bg-background/50 text-[10px] font-black uppercase tracking-wider text-primary cursor-pointer active:bg-neutral-800 select-none"
+            >
+              {isSwitchingSem ? (
+                <Loader2 className="w-3 h-3 text-primary animate-spin" />
+              ) : (
+                `Sem ${profile?.semester || 1}`
+              )}
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+
+            <AnimatePresence>
+              {isSemDropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.12 }}
+                  className="absolute right-0 mt-1.5 w-36 glass-panel rounded-xl border border-border bg-[#0f0f12] p-1 shadow-2xl z-40 overflow-hidden"
+                >
+                  <div className="text-[8px] font-black uppercase tracking-widest text-muted-foreground px-2 py-1 border-b border-border/40 select-none">
+                    Select Semester
+                  </div>
+                  <div className="max-h-48 overflow-y-auto py-1 space-y-0.5">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
+                      const isActive = (profile?.semester || 1) === sem;
+                      return (
+                        <button
+                          key={sem}
+                          type="button"
+                          onClick={() => handleSemesterSwitch(sem)}
+                          className={`w-full text-left h-7 px-2 rounded-lg text-[10px] font-bold transition-all flex items-center justify-between cursor-pointer ${
+                            isActive
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:bg-neutral-900/50 hover:text-white"
+                          }`}
+                        >
+                          <span>Semester {sem}</span>
+                          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* Mobile Theme Toggle */}
           <button
             type="button"
@@ -332,9 +487,83 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation Bar */}
+      {/* Mobile Bottom Navigation Bar with Center Elevated Quick Actions trigger */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 border-t border-border bg-card/85 backdrop-blur-lg flex items-center justify-evenly z-20 safe-bottom">
-        {navItems.map((item) => {
+        {/* Left half: Home, Attend, Tasks */}
+        {navItems.slice(0, 3).map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center h-full gap-0.5 min-w-0 px-1 transition-all ${
+                isActive ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <Icon className="w-[18px] h-[18px] shrink-0" />
+              <span className="text-[8px] font-bold tracking-wide uppercase truncate max-w-[52px] text-center leading-tight">{(item as any).mobileName || item.name}</span>
+            </Link>
+          );
+        })}
+
+        {/* Center elevated button trigger */}
+        <div className="relative -mt-6" onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={() => setIsMobileActionsOpen(!isMobileActionsOpen)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/30 border border-primary/20 cursor-pointer transition-all duration-300 outline-none ${
+              isMobileActionsOpen 
+                ? "bg-destructive rotate-45 border-destructive/20 shadow-destructive/25" 
+                : "bg-gradient-to-tr from-primary to-blue-400 active:scale-95"
+            }`}
+            title="Quick Action Menu"
+          >
+            <Plus className="w-5 h-5 font-black" />
+          </button>
+
+          {/* Mobile Landscape Quick Actions Panel Overlay */}
+          <AnimatePresence>
+            {isMobileActionsOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 15, scale: 0.95, x: "-50%" }}
+                animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
+                exit={{ opacity: 0, y: 15, scale: 0.95, x: "-50%" }}
+                transition={{ duration: 0.15 }}
+                className="absolute bottom-20 left-1/2 z-30 glass-panel rounded-[20px] border border-border bg-[#0f0f12]/95 p-3 flex items-center justify-center gap-5 shadow-2xl shrink-0 select-none w-[240px]"
+              >
+                {[
+                  { id: "quick-attendance", label: "Attend", icon: Percent, color: "bg-blue-500 hover:bg-blue-400" },
+                  { id: "add-assignment", label: "Task", icon: BookOpen, color: "bg-emerald-500 hover:bg-emerald-400" },
+                  { id: "command-menu", label: "Menu", icon: Command, color: "bg-purple-600 hover:bg-purple-500" },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        handleQuickAction(item.id);
+                        setIsMobileActionsOpen(false);
+                      }}
+                      className="flex flex-col items-center gap-1 cursor-pointer outline-none group"
+                    >
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white ${item.color} border border-white/10 shadow-md active:scale-95 transition-all shrink-0`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="text-[8px] font-black text-neutral-300 uppercase tracking-widest leading-none mt-1">
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Right half: Table, CGPA, Profile */}
+        {navItems.slice(3).map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (

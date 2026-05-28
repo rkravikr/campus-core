@@ -24,7 +24,7 @@ export default function FloatingActions({ onTrigger }: FloatingActionsProps) {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 text-right">
+    <div className="hidden md:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-3 text-right">
       {/* Expanded Speed-Dial Buttons */}
       <AnimatePresence>
         {isOpen && (
