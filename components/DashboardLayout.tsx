@@ -84,11 +84,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleSignOut = async () => {
     try {
-      await authService.signOut();
+      // Force UI to clear even if Supabase API hangs (known bug on corrupted sessions)
+      await Promise.race([
+        authService.signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 1500))
+      ]);
     } catch (err) {
-      console.error("Logout API failed, but clearing local session anyway:", err);
+      console.error("Logout API failed or timed out, but clearing local session anyway:", err);
     } finally {
+      // 1. Manually blast all Supabase local storage keys to destroy the Auth Deadlock
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("sb-")) {
+          localStorage.removeItem(key);
+        }
+      }
+      
+      // 2. Clear Zustand store
       useAuthStore.getState().clearSession();
+      
+      // 3. Force hard redirect
       window.location.href = "/";
     }
   };

@@ -74,12 +74,21 @@ export default function DashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const [subsData, assignsData, timetableData, gradesData] = await Promise.all([
+      const fetchPromise = Promise.all([
         attendanceService.getSubjects(),
         assignmentService.getAssignments(),
         timetableService.getTimetable(),
         gradeService.getGrades(),
       ]);
+
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Supabase API timed out. Your session might be corrupted, please try logging out and logging back in.")), 4000)
+      );
+
+      const [subsData, assignsData, timetableData, gradesData] = await Promise.race([
+        fetchPromise, 
+        timeoutPromise
+      ]) as [Subject[], any[], any[], Grade[]];
 
       setSubjects(subsData);
       setAssignments(assignsData);
