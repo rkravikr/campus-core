@@ -8,6 +8,11 @@ export const attendanceService = {
    * Fetches all subjects for the authenticated user.
    */
   async getSubjects(userId?: string, semester?: number): Promise<Subject[]> {
+    if (userId === "demo-user-id" || (!userId && typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session"))) {
+      const { getDemoSubjects } = await import("./demo.data");
+      return getDemoSubjects(semester);
+    }
+
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -40,6 +45,11 @@ export const attendanceService = {
    * Adds a new subject to track.
    */
   async addSubject(subjectName: string, semester?: number): Promise<Subject> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { addDemoSubject } = await import("./demo.data");
+      return addDemoSubject(subjectName, semester);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -77,6 +87,11 @@ export const attendanceService = {
     subjectId: string,
     updates: Partial<Pick<Subject, "subject_name" | "total_classes" | "attended_classes">>
   ): Promise<Subject> {
+    if (subjectId.startsWith("sub-")) {
+      const { updateDemoSubject } = await import("./demo.data");
+      return updateDemoSubject(subjectId, updates);
+    }
+
     const { data, error } = await supabase
       .from("subjects")
       .update(updates)
@@ -92,6 +107,11 @@ export const attendanceService = {
    * Deletes a subject and cascades related items.
    */
   async deleteSubject(subjectId: string): Promise<void> {
+    if (subjectId.startsWith("sub-")) {
+      const { deleteDemoSubject } = await import("./demo.data");
+      return deleteDemoSubject(subjectId);
+    }
+
     const { error } = await supabase
       .from("subjects")
       .delete()
@@ -109,6 +129,18 @@ export const attendanceService = {
     subjectId: string,
     type: "attended" | "missed"
   ): Promise<Subject> {
+    if (subjectId.startsWith("sub-")) {
+      const { updateDemoSubject } = await import("./demo.data");
+      const subjects = JSON.parse(localStorage.getItem("campus_core_demo_subjects") || "[]") as Subject[];
+      const subject = subjects.find(s => s.id === subjectId);
+      if (!subject) throw new Error("Subject not found");
+      const updates = {
+        total_classes: subject.total_classes + 1,
+        attended_classes: type === "attended" ? subject.attended_classes + 1 : subject.attended_classes,
+      };
+      return updateDemoSubject(subjectId, updates);
+    }
+
     // 1. Fetch current counts
     const { data: subject, error: fetchErr } = await supabase
       .from("subjects")
@@ -135,6 +167,22 @@ export const attendanceService = {
     subjectId: string,
     type: "attended" | "missed"
   ): Promise<Subject> {
+    if (subjectId.startsWith("sub-")) {
+      const { updateDemoSubject } = await import("./demo.data");
+      const subjects = JSON.parse(localStorage.getItem("campus_core_demo_subjects") || "[]") as Subject[];
+      const subject = subjects.find(s => s.id === subjectId);
+      if (!subject) throw new Error("Subject not found");
+      if (subject.total_classes === 0) return subject as Subject;
+      const updates = {
+        total_classes: Math.max(0, subject.total_classes - 1),
+        attended_classes: 
+          type === "attended" 
+            ? Math.max(0, subject.attended_classes - 1) 
+            : Math.max(0, Math.min(subject.total_classes - 1, subject.attended_classes)),
+      };
+      return updateDemoSubject(subjectId, updates);
+    }
+
     const { data: subject, error: fetchErr } = await supabase
       .from("subjects")
       .select("total_classes, attended_classes")

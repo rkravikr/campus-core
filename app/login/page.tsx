@@ -258,6 +258,35 @@ function LoginForm() {
               </>
             )}
           </button>
+
+          {/* Quick Sandbox Demo Auto-Login Shortcut */}
+          <div className="mt-5 pt-4 border-t border-border/60 text-center">
+            <span className="text-[10px] text-muted-foreground block mb-2 font-medium">
+              Want to check out V1 without registering?
+            </span>
+            <button
+              type="button"
+              onClick={async () => {
+                setIsLoading(true);
+                setAuthError(null);
+                try {
+                  const { data } = await authService.signInWithEmail("demo@campuscore.app", "demo1234");
+                  if (data?.session) {
+                    await useAuthStore.getState().setSession(data.session as any);
+                    router.refresh();
+                    router.push(redirectTo);
+                  }
+                } catch (err: any) {
+                  setAuthError(err.message || "Failed to auto-sign-in to Demo.");
+                  setIsLoading(false);
+                }
+              }}
+              disabled={isLoading || isGoogleLoading}
+              className="text-xs font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer hover:underline"
+            >
+              🔑 Launch Sandbox Demo Mode
+            </button>
+          </div>
         </div>
 
         {/* Footnote */}

@@ -1,3 +1,9 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
+import { authService } from "@/services/auth.service";
 import {
   BookOpen,
   Calendar,
@@ -9,10 +15,37 @@ import {
   Flame,
   Percent,
   Layers,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
+  const router = useRouter();
+  const [isDemoLoggingIn, setIsDemoLoggingIn] = useState(false);
+  const { setSession } = useAuthStore();
+
+  const handleLaunchDemo = async () => {
+    if (isDemoLoggingIn) return;
+    setIsDemoLoggingIn(true);
+    try {
+      // 1. Authenticate with virtual sandbox demo credentials
+      const { data } = await authService.signInWithEmail("demo@campuscore.app", "demo1234");
+      
+      if (data?.session) {
+        // 2. Set Zustand session store instantly
+        await setSession(data.session as any);
+        
+        // 3. Clear existing window parameters and route transitions
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Demo auto-login failed:", err);
+      alert("Failed to initialize virtual demo environment. Please try again.");
+    } finally {
+      setIsDemoLoggingIn(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-between py-12 px-6 overflow-hidden md:py-24">
       {/* Background Aesthetic Elements */}
@@ -76,7 +109,7 @@ export default function Home() {
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-sm mb-16">
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-sm mb-12">
           <Link href="/dashboard" className="w-full sm:w-auto">
             <button className="glow-btn w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary hover:bg-primary/95 text-white font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 cursor-pointer">
               Get Started Free
@@ -88,6 +121,46 @@ export default function Home() {
               Read V1 Docs
             </button>
           </Link>
+        </div>
+
+        {/* Sandbox Demo Quick Launch Block */}
+        <div className="w-full max-w-lg mb-16 p-6 rounded-2xl border border-border/80 bg-card/25 backdrop-blur-xl relative overflow-hidden text-left mx-auto">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.04)_0%,transparent_60%)] pointer-events-none" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-[9px] font-black text-primary uppercase tracking-widest block">
+                Sandbox Environment
+              </span>
+              <h3 className="text-sm font-bold text-white">
+                Test V1 with Mock Data
+              </h3>
+              <p className="text-xs text-muted-foreground max-w-xs leading-normal">
+                Sign in instantly to a fully-populated workspace with preloaded timetable and attendance logs. Persists entirely in your browser.
+              </p>
+            </div>
+            
+            <button
+              onClick={handleLaunchDemo}
+              disabled={isDemoLoggingIn}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-gradient-to-r from-primary to-blue-500 hover:from-primary/90 hover:to-blue-500/90 text-white text-xs font-bold shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap disabled:opacity-60"
+            >
+              {isDemoLoggingIn ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Spinning up Workspace...
+                </>
+              ) : (
+                <>
+                  Launch Instant Demo 🚀
+                </>
+              )}
+            </button>
+          </div>
+          
+          <div className="mt-4 pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[10px] text-muted-foreground">
+            <span>Virtual Account: <code className="text-neutral-300 font-bold bg-[#101014] px-1.5 py-0.5 rounded border border-border/60">demo@campuscore.app</code></span>
+            <span>Password: <code className="text-neutral-300 font-bold bg-[#101014] px-1.5 py-0.5 rounded border border-border/60">demo1234</code></span>
+          </div>
         </div>
 
         {/* Dashboard Preview / Showcase (Interactive Mockup feeling) */}

@@ -13,7 +13,15 @@ export const examService = {
   /**
    * Fetches all upcoming exams for the authenticated user, joining the subject details.
    */
+  /**
+   * Fetches all upcoming exams for the authenticated user, joining the subject details.
+   */
   async getExams(semester?: number): Promise<ExamWithSubject[]> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { getDemoExams } = await import("./demo.data");
+      return getDemoExams(semester);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -45,6 +53,11 @@ export const examService = {
   async addExam(
     exam: Omit<Exam, "id" | "user_id" | "created_at" | "semester"> & { semester?: number }
   ): Promise<ExamWithSubject> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { addDemoExam } = await import("./demo.data");
+      return addDemoExam(exam);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -82,6 +95,11 @@ export const examService = {
     examId: string,
     updates: Partial<Omit<Exam, "id" | "user_id" | "created_at">>
   ): Promise<ExamWithSubject> {
+    if (examId.startsWith("exam-")) {
+      const { updateDemoExam } = await import("./demo.data");
+      return updateDemoExam(examId, updates);
+    }
+
     const { data, error } = await supabase
       .from("exams")
       .update(updates)
@@ -97,6 +115,11 @@ export const examService = {
    * Deletes an exam entry.
    */
   async deleteExam(examId: string): Promise<void> {
+    if (examId.startsWith("exam-")) {
+      const { deleteDemoExam } = await import("./demo.data");
+      return deleteDemoExam(examId);
+    }
+
     const { error } = await supabase
       .from("exams")
       .delete()

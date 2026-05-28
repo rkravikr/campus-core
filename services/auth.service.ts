@@ -8,6 +8,48 @@ export const authService = {
    * Signs in a user using email and password.
    */
   async signInWithEmail(email: string, password: string) {
+    if (email.toLowerCase().trim() === "demo@campuscore.app") {
+      if (password !== "demo1234") {
+        throw new Error("Invalid credentials for demo account");
+      }
+
+      const { seedDemoData, DEMO_USER_ID } = await import("./demo.data");
+      seedDemoData(true); // Always force seed initial dashboard state on direct demo logins
+
+      const mockSession = {
+        access_token: "demo-jwt-token",
+        token_type: "bearer",
+        expires_in: 3600,
+        refresh_token: "demo-refresh-token",
+        user: {
+          id: DEMO_USER_ID,
+          aud: "authenticated",
+          role: "authenticated",
+          email: "demo@campuscore.app",
+          email_confirmed_at: new Date().toISOString(),
+          phone: "",
+          confirmed_at: new Date().toISOString(),
+          last_sign_in_at: new Date().toISOString(),
+          app_metadata: { provider: "email", providers: ["email"] },
+          user_metadata: {
+            full_name: "Alex Mercer",
+            college_name: "Tech Institute of Technology",
+            course: "Computer Science & Engineering",
+            semester: 5,
+          },
+          identities: [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      };
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("campus_core_demo_session", JSON.stringify(mockSession));
+      }
+
+      return { data: { session: mockSession as any, user: mockSession.user as any }, error: null };
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -52,7 +94,7 @@ export const authService = {
    * Initiates the Google OAuth sign-in flow.
    */
   async signInWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -66,6 +108,11 @@ export const authService = {
    * Signs out the current user session.
    */
   async signOut() {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { clearDemoData } = await import("./demo.data");
+      clearDemoData();
+      return;
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   },
@@ -74,6 +121,11 @@ export const authService = {
    * Fetches the user profile from the database public.profiles table.
    */
   async getUserProfile(userId: string): Promise<Profile | null> {
+    if (userId === "demo-user-id") {
+      const { getDemoProfile } = await import("./demo.data");
+      return getDemoProfile();
+    }
+
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
@@ -108,6 +160,11 @@ export const authService = {
     userId: string,
     updates: Partial<Omit<Profile, "id" | "created_at">>
   ): Promise<Profile> {
+    if (userId === "demo-user-id") {
+      const { updateDemoProfile } = await import("./demo.data");
+      return updateDemoProfile(updates);
+    }
+
     const { data, error } = await supabase
       .from("profiles")
       .update(updates)
@@ -123,6 +180,11 @@ export const authService = {
    * Deletes the user account permanently by executing the security definer function.
    */
   async deleteAccount(): Promise<void> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { clearDemoData } = await import("./demo.data");
+      clearDemoData();
+      return;
+    }
     const { error } = await supabase.rpc("delete_user_account");
     if (error) throw error;
   },

@@ -14,6 +14,11 @@ export const assignmentService = {
    * Fetches all assignments for the authenticated user, joining the subject details.
    */
   async getAssignments(userId?: string, semester?: number): Promise<AssignmentWithSubject[]> {
+    if (userId === "demo-user-id" || (!userId && typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session"))) {
+      const { getDemoAssignments } = await import("./demo.data");
+      return getDemoAssignments(semester);
+    }
+
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -48,6 +53,11 @@ export const assignmentService = {
   async addAssignment(
     assignment: Omit<Assignment, "id" | "user_id" | "created_at" | "completed" | "semester"> & { semester?: number }
   ): Promise<AssignmentWithSubject> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { addDemoAssignment } = await import("./demo.data");
+      return addDemoAssignment(assignment);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -88,6 +98,11 @@ export const assignmentService = {
     assignmentId: string,
     updates: Partial<Omit<Assignment, "id" | "user_id" | "created_at">>
   ): Promise<AssignmentWithSubject> {
+    if (assignmentId.startsWith("task-")) {
+      const { updateDemoAssignment } = await import("./demo.data");
+      return updateDemoAssignment(assignmentId, updates);
+    }
+
     const { data, error } = await supabase
       .from("assignments")
       .update(updates)
@@ -103,6 +118,11 @@ export const assignmentService = {
    * Deletes an assignment.
    */
   async deleteAssignment(assignmentId: string): Promise<void> {
+    if (assignmentId.startsWith("task-")) {
+      const { deleteDemoAssignment } = await import("./demo.data");
+      return deleteDemoAssignment(assignmentId);
+    }
+
     const { error } = await supabase
       .from("assignments")
       .delete()

@@ -61,6 +61,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   initialize: () => {
+    // Check for active virtual demo session on cold load
+    if (typeof window !== "undefined") {
+      const demoSessionStr = localStorage.getItem("campus_core_demo_session");
+      if (demoSessionStr) {
+        try {
+          const demoSession = JSON.parse(demoSessionStr);
+          set({ session: demoSession, user: demoSession.user, isLoading: false, error: null });
+          get().fetchProfile(demoSession.user.id);
+          return () => {}; // Return dummy unsubscribe since no Supabase listeners are active
+        } catch (err) {
+          console.error("Failed to parse virtual demo session:", err);
+        }
+      }
+    }
+
     // Only trigger loading state on cold loads if no session exists in memory
     if (!get().session) {
       set({ isLoading: true });

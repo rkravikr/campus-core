@@ -8,6 +8,11 @@ export const gradeService = {
    * Fetches all grade entries for the authenticated user.
    */
   async getGrades(userId?: string): Promise<Grade[]> {
+    if (userId === "demo-user-id" || (!userId && typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session"))) {
+      const { getDemoGrades } = await import("./demo.data");
+      return getDemoGrades();
+    }
+
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -32,6 +37,11 @@ export const gradeService = {
   async addGrade(
     grade: Omit<Grade, "id" | "user_id" | "created_at">
   ): Promise<Grade> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { addDemoGrade } = await import("./demo.data");
+      return addDemoGrade(grade);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -59,6 +69,11 @@ export const gradeService = {
     gradeId: string,
     updates: Partial<Omit<Grade, "id" | "user_id" | "created_at">>
   ): Promise<Grade> {
+    if (gradeId.startsWith("g-")) {
+      const { updateDemoGrade } = await import("./demo.data");
+      return updateDemoGrade(gradeId, updates);
+    }
+
     const { data, error } = await supabase
       .from("grades")
       .update(updates)
@@ -74,6 +89,11 @@ export const gradeService = {
    * Deletes a grade entry.
    */
   async deleteGrade(gradeId: string): Promise<void> {
+    if (gradeId.startsWith("g-")) {
+      const { deleteDemoGrade } = await import("./demo.data");
+      return deleteDemoGrade(gradeId);
+    }
+
     const { error } = await supabase
       .from("grades")
       .delete()

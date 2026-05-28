@@ -14,6 +14,11 @@ export const timetableService = {
    * Fetches the entire weekly timetable for the authenticated user, joining subject details.
    */
   async getTimetable(userId?: string, semester?: number): Promise<TimetableEntryWithSubject[]> {
+    if (userId === "demo-user-id" || (!userId && typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session"))) {
+      const { getDemoTimetable } = await import("./demo.data");
+      return getDemoTimetable(semester);
+    }
+
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -48,6 +53,11 @@ export const timetableService = {
   async addTimetableEntry(
     entry: Omit<TimetableEntry, "id" | "user_id" | "created_at" | "semester"> & { semester?: number }
   ): Promise<TimetableEntryWithSubject> {
+    if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
+      const { addDemoTimetableEntry } = await import("./demo.data");
+      return addDemoTimetableEntry(entry);
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
@@ -87,6 +97,11 @@ export const timetableService = {
     entryId: string,
     updates: Partial<Omit<TimetableEntry, "id" | "user_id" | "created_at">>
   ): Promise<TimetableEntryWithSubject> {
+    if (entryId.startsWith("time-")) {
+      const { updateDemoTimetableEntry } = await import("./demo.data");
+      return updateDemoTimetableEntry(entryId, updates);
+    }
+
     const { data, error } = await supabase
       .from("timetable")
       .update(updates)
@@ -102,6 +117,11 @@ export const timetableService = {
    * Deletes a class from the timetable.
    */
   async deleteTimetableEntry(entryId: string): Promise<void> {
+    if (entryId.startsWith("time-")) {
+      const { deleteDemoTimetableEntry } = await import("./demo.data");
+      return deleteDemoTimetableEntry(entryId);
+    }
+
     const { error } = await supabase
       .from("timetable")
       .delete()
