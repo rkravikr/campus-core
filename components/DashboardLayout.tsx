@@ -93,12 +93,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       console.error("Logout API failed or timed out, but clearing local session anyway:", err);
     } finally {
       // 1. Manually blast all Supabase local storage keys to destroy the Auth Deadlock
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("sb-")) {
-          localStorage.removeItem(key);
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith("sb-"))
+        .forEach((key) => localStorage.removeItem(key));
+
+      // 2. Blast all Supabase session cookies so server/middleware sees user as logged out
+      document.cookie.split(";").forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        if (name.startsWith("sb-")) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
         }
-      }
+      });
       
       // 2. Clear Zustand store
       useAuthStore.getState().clearSession();
