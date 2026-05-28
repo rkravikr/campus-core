@@ -27,6 +27,7 @@ export default function TimetablePage() {
 
   // Active day on mobile tab (defaults to current day of the week!)
   const [activeMobileDay, setActiveMobileDay] = useState<Weekday>("Monday");
+  const [mounted, setMounted] = useState(false);
 
   // Modals state
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -45,6 +46,7 @@ export default function TimetablePage() {
 
   // Set the mobile active day to today's day of the week on mount
   useEffect(() => {
+    setMounted(true);
     const today = new Date().getDay(); // 0 is Sunday, 1 is Monday ... 6 is Saturday
     const currentDayMapped = today === 0 ? "Sunday" : weekdays[today - 1];
     setActiveMobileDay(currentDayMapped);
