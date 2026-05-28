@@ -66,13 +66,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: true });
     }
 
-    // Safety timeout: if Supabase hangs, force UI to unblock after 3 seconds
+    // Safety timeout: if Supabase hangs, force UI to unblock after 10 seconds
     const timeout = setTimeout(() => {
       if (get().isLoading) {
         console.warn("Auth initialization timed out, forcing UI unblock");
         set({ isLoading: false });
       }
-    }, 3000);
+    }, 10000);
 
     // 1. Get initial session
     supabase.auth.getSession().then((res: any) => {

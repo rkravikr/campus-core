@@ -82,7 +82,7 @@ export default function DashboardPage() {
       ]);
 
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Supabase API timed out. Your session might be corrupted, please try logging out and logging back in.")), 4000)
+        setTimeout(() => reject(new Error("Supabase API timed out. Your session might be corrupted, please try logging out and logging back in.")), 15000)
       );
 
       const [subsData, assignsData, timetableData, gradesData] = await Promise.race([
