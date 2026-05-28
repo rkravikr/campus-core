@@ -4,6 +4,12 @@ export interface Profile {
   college_name: string | null;
   course: string | null;
   semester: number | null;
+  avatar_url: string | null;
+  usn: string | null;
+  mobile_number: string | null;
+  bio: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
   created_at: string;
 }
 

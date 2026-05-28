@@ -67,7 +67,7 @@ export default function Home() {
             v1.0.0 Stable
           </span>
           <a
-            href="https://github.com/rkravikr"
+            href="https://github.com/rkravikr/campus-core"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-white transition-colors px-2.5 py-1 rounded-full border border-border bg-card/50 hover:bg-card/80"

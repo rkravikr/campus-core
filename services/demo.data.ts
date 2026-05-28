@@ -14,6 +14,7 @@ const TIMETABLE_KEY = "campus_core_demo_timetable";
 const GRADES_KEY = "campus_core_demo_grades";
 const EXAMS_KEY = "campus_core_demo_exams";
 const SESSION_KEY = "campus_core_demo_session";
+const AVATAR_KEY = "campus_core_demo_avatar";
 
 // Pre-seeded Initial Profile
 const INITIAL_PROFILE: Profile = {
@@ -22,6 +23,12 @@ const INITIAL_PROFILE: Profile = {
   college_name: "Tech Institute of Technology",
   course: "Computer Science & Engineering",
   semester: 5,
+  avatar_url: null,
+  usn: null,
+  mobile_number: null,
+  bio: "Engineering student | Builder",
+  linkedin_url: null,
+  github_url: null,
   created_at: new Date().toISOString(),
 };
 
@@ -266,6 +273,7 @@ export const clearDemoData = () => {
   localStorage.removeItem(GRADES_KEY);
   localStorage.removeItem(EXAMS_KEY);
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(AVATAR_KEY);
 };
 
 // Generic read/write helpers
@@ -283,7 +291,21 @@ const writeKey = <T>(key: string, value: T): void => {
 
 // API: Profile
 export const getDemoProfile = (): Profile => {
-  return readKey(PROFILE_KEY, INITIAL_PROFILE);
+  const profile = readKey(PROFILE_KEY, INITIAL_PROFILE);
+  // Overlay the avatar from its dedicated key (base64 data URLs are large)
+  const avatar = typeof window !== "undefined" ? localStorage.getItem(AVATAR_KEY) : null;
+  return { ...profile, avatar_url: avatar || profile.avatar_url };
+};
+
+// API: Avatar (stored separately because base64 strings are large)
+export const setDemoAvatar = (base64DataUrl: string): void => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(AVATAR_KEY, base64DataUrl);
+};
+
+export const getDemoAvatar = (): string | null => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(AVATAR_KEY);
 };
 
 export const updateDemoProfile = (updates: Partial<Profile>): Profile => {

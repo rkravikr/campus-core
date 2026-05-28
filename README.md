@@ -1,20 +1,26 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge" alt="Version" />
-  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Version-1.1.0-blue?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=next.js" alt="Next.js" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Supabase-Backend-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/badge/Stars-Github-gold?style=for-the-badge&logo=github" alt="Stars" />
 </p>
 
 <h1 align="center">🎓 Campus Core</h1>
 
 <p align="center">
   <strong>The Student Operating System</strong><br/>
-  <sub>A modern, premium workspace for college students to manage academics, attendance, assignments, schedules, and performance — all from one place.</sub>
+  <sub>A modern, premium desktop & mobile workspace for college students to manage academics, attendance, timetables, assignments, and grades — with an offline sandbox to test instantly.</sub>
 </p>
 
 <p align="center">
-  <a href="#-features">Features</a> •
+  🚀 <strong><a href="https://campuscore.app">Launch Live App</a></strong> •
+  ⭐ <strong><a href="#-getting-started">Star The Repo</a></strong>
+</p>
+
+<p align="center">
+  <a href="#-visual-tour">Visual Tour</a> •
+  <a href="#-core-modules">Core Modules</a> •
   <a href="#-tech-stack">Tech Stack</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-database-schema">Database</a> •
@@ -26,324 +32,234 @@
 
 ## 🧠 Overview
 
-Campus Core replaces scattered workflows involving WhatsApp groups, notes apps, calendar apps, manual attendance tracking, spreadsheet CGPA calculators, and messy college ERP systems — with a **lightning-fast, premium workspace** specifically tailored for college students.
+Campus Core replaces scattered workflows involving messy college ERPs, spreadsheet GPA calculators, WhatsApp groups, manual calendar planners, and notepad tracking with a **lightning-fast, gorgeous workspace** specifically tailored for students.
 
 ### Product Philosophy
-
-| | |
-|---|---|
-| ✨ **Minimal** | Clean interfaces, no clutter |
-| 💎 **Premium** | Startup-quality design and interactions |
-| 📐 **Organized** | Everything in the right place |
-| ⚡ **Fast** | Instant loads, optimistic UI |
-| 🔒 **Reliable** | Persistent sessions, row-level security |
-| 📱 **Mobile-First** | Built for how students actually use apps |
+* **Minimalist Aesthetics:** High-end dark theme inspired by Vercel, Linear, and Raycast, designed to reduce cognitive load.
+* **Instant Gratification:** One-click instant demo allows users to explore a pre-populated dashboard without registering.
+* **Local Sandbox Fallback:** Live edits in the demo environment persist strictly inside local storage so they don't pollute database servers.
+* **Optimistic Core UI:** Tab switches, assignment logs, and attendance counters update instantly on the screen before the database responds.
 
 ---
 
-## ✨ Features
+## 📸 Visual Tour
 
-### 📊 Attendance Tracker
-Track total and attended classes per subject. Auto-calculate attendance percentages, safe-bunk counts, and receive visual warnings near the 75% danger zone.
+| 📊 Academic Dashboard | 📅 Responsive Weekly Planner |
+|---|---|
+| ![Dashboard Showcase](public/screenshots/dashboard.png) | ![Timetable Grid](public/screenshots/timetable.png) |
 
-- Add / Edit / Delete subjects
-- One-tap attended & missed logging
-- Safe bunk calculation (75% threshold)
-- Visual circular progress gauges
+| 🎒 Gamified Completeness Meter | ⚡ Cmd+K Command Search |
+|---|---|
+| ![Completeness Bar](public/screenshots/completeness.png) | ![Command Palette](public/screenshots/command_palette.png) |
 
-### ✅ Assignment Tracker
-Never miss a deadline. Manage coursework deliverables with priority tags, due dates, subject linking, and completion checkboxes.
+*(To submit screenshots of your fork, drop your PNG assets into `public/screenshots/` and update these links!)*
 
-- Priority tagging (High / Medium / Low)
-- Due date tracking with overdue alerts
-- Subject-linked assignments
-- Optimistic completion toggles
+---
 
-### 🕐 Weekly Timetable
-A clean, responsive weekly schedule. Desktop shows all 7 days in a grid board. Mobile uses a daily tab-switching timeline with room locations.
+## ⚡ Core Modules
 
-- 7-day desktop grid layout
-- Mobile daily tab switcher
-- Room & location info
-- Today auto-highlighting
+### 📊 Attendance Analytics
+Stay well above the 75% threshold without manual calculations. Log and track lectures per subject.
+* **Intelligent Bunksameter:** Auto-computes exactly how many classes you can afford to safely bunk or how many you must attend to stay safe.
+* **Color-Coded Thresholds:** Progress meters transition dynamically from premium blue (Safe) to warning orange (Danger) and critical red (Below 75%).
+* **One-Tap Quick Log:** Fast incremental buttons to record attended or missed classes on the fly.
 
-### 🏆 CGPA Calculator
-Log semester grades with credit hours and letter grades. Get automatic SGPA per semester and cumulative CGPA on a 10-point Indian grading scale.
+### 🎒 Semester-Based Workspace
+Advance through your degree cleanly with modular, multi-semester workspace contexts.
+* **Strict Semester Isolation:** Timetables, subjects, assignments, and grades are strictly isolated under each semester level (Sem 1 to 8).
+* **Workspace Switcher:** A desktop sidebar switcher and floating mobile bar let you hop back into previous semesters to view or edit historical data anytime.
 
-- Credit-weighted SGPA calculation
-- Cumulative CGPA (O=10, A+=9, ...)
-- Semester performance roadmap
-- Earned vs attempted credits
+### ✅ Assignment Tracking
+Ensure you never miss a deadline. Manage coursework tasks using prioritizations, deadlines, and direct subject linkages.
+* **Priority Matrices:** Categorize tasks under High, Medium, and Low priorities with clear glowing indicators.
+* **Dynamic Deadlines:** Overdue tags glow red and sorting parameters bubble high-priority approaching items to the top.
+* **Optimistic Checks:** Checkbox animations execute instantly, updating your dashboard totals optimistically.
 
-### ⌨️ Command Menu & Floating Actions
-Navigate and execute core student workflows instantly using optimized keyboard shortcuts and springs.
+### 📅 Timetable Management
+A clean scheduling system adapting effortlessly to your device size.
+* **7-Day Grid Board:** Desktop displays full weekly calendar matrices with subjects, times, and lecture locations.
+* **Mobile Swiper:** Swipe-based tabs filter schedules by day on mobile to optimize screen real estate.
+* **Active Highlighting:** Highlights the ongoing lecture based on the current system clock time.
 
-- Global `Ctrl+K` / `Cmd+K` command search palette
-- Responsive floating speed-dial button
-- In-context logging forms and dynamic modal overlays
+### 🏆 CGPA Analysis
+A visual, weighted roadmap of your college grades and performance metrics.
+* **Credit Weighting:** Log letter grades alongside credit weights to automatically generate semester SGPA and cumulative CGPA.
+* **Indian Grading Support:** Pre-calibrated standard credit indexes (O=10, A+=9, A=8, etc.) to match most university grading requirements.
+* **Visual Graph Trends:** Light/dark mode-optimized performance trends highlighting semester-over-semester trajectories.
 
-### 🔄 Multi-Semester Data Isolation
-Completing one semester and advancing to the next isolates your academic modules cleanly under the selected semester.
+### 🤖 AI Insights (Future V2)
+Intelligent analysis hooks ready for external LLM integrations.
+* **Smart Study Planner:** Analyzes outstanding coursework priorities and timetable schedules to suggest optimized study calendars.
+* **Attendance Predictions:** Automatically models upcoming calendar logs to alert you of potential threshold drops in advance.
 
-- Scoped subjects, timetable schedules, assignments, and exams based on your active semester profile
-- Change back to previous semesters at any time to seamlessly restore and view all old semester details
+### ⌨️ Command Palette & Quick Actions
+A unified command center mapping keyboard power users directly to application actions.
+* **Global Ctrl+K Search Hub:** Press `Ctrl + K` (or `Cmd + K`) anywhere to summon the command menu. Search subjects, add assignments, switch semesters, toggle light theme, or jump sections instantly.
+* **Speed-Dial Floating Action:** A sleek, animated floating speed-dial button at the screen corner offers quick thumb-reaches on mobile devices.
 
-### 🎯 Dashboard
-A unified command center. See attendance health, CGPA progress, pending assignments, today's lectures, and a live 24-hour clock — all at a glance.
-
-- Attendance, CGPA, coursework summary cards
-- Today's lecture timeline
-- Upcoming deliverables checklist
-- Live 24h clock with date
-
-### 🔐 Authentication & Danger Zone
-Secure email/password and Google OAuth login. Account security includes a complete data purge safety switch.
-
-- Email & password signup/login
-- Google OAuth integration
-- Persistent sessions (tab-switch safe)
-- **Danger Zone**: Irreversible account deletion requiring manual typing verification to permanently cascade-wipe all profile and academic data from the database
+### 🔄 Persistent Cloud Sync & Demo Sandbox
+Engineered for reliable network persistence, with a zero-friction playground.
+* **Supabase Core Integration:** Enforces strict Row Level Security (RLS) policies on every CRUD transaction.
+* **Virtual Demo Interception:** A client-side interceptor halts real database requests for `demo@campuscore.app` guest accounts, persisting edits to `localStorage` to allow safe, instant evaluation.
 
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
+### Frontend Architecture
+* **Framework:** Next.js 16.2 (App Router with full Client-Server streaming boundaries)
+* **Language:** TypeScript 5.0 (Strict mode type-safety)
+* **Styling System:** Tailwind CSS v4 (Modern CSS variables, next-gen compiler speeds)
+* **Transitions:** Framer Motion 12 (Subtle micro-interactions & hardware-accelerated layouts)
+* **State Manager:** Zustand 5 (Lightweight global Zustand slices caching local configurations)
+* **Validation:** React Hook Form + Zod (Robust structural validations with custom regex boundaries)
 
-| Technology | Purpose |
-|---|---|
-| **Next.js 16** | App Router, Server & Client Components |
-| **TypeScript** | Strict type-safety across the codebase |
-| **Tailwind CSS v4** | Utility-first responsive styling |
-| **Framer Motion** | Smooth micro-animations |
-| **Zustand** | Lightweight global state management |
-| **React Hook Form + Zod** | Validated form handling |
-
-### Backend
-
-| Technology | Purpose |
-|---|---|
-| **Supabase** | Auth, Database, Row Level Security |
-| **PostgreSQL** | Relational data with UUID primary keys |
-| **Supabase Auth** | JWT session tokens & OAuth providers |
-
-### Tooling
-
-| Tool | Purpose |
-|---|---|
-| **Git & GitHub** | Version control & collaboration |
-| **ESLint** | Code quality enforcement |
-| **Vercel** | Frontend deployment (planned) |
+### Backend Services
+* **Database Platform:** Supabase (Postgres core instance)
+* **Auth Core:** Supabase Auth (Persistent session tokens and OAuth structures)
+* **Storage Systems:** Supabase Storage (Public assets bucket with scoped write rules for user profile avatars)
 
 ---
 
 ## 🏗 Architecture
 
-Campus Core follows a **frontend-heavy architecture** using Supabase as the backend service. The frontend handles UI rendering, state management, client-side validation, and dashboard calculations. Supabase handles authentication, the PostgreSQL database, row-level security, and CRUD operations.
-
-### Project Structure
+Campus Core utilizes a **service-oriented design** pattern on top of a server-rendered core. Views fetch session profiles dynamically, leveraging optimism at the client state layer for visual velocity.
 
 ```
 campus-core/
-├── app/                # Next.js App Router pages
-│   ├── dashboard/      # Main dashboard
-│   ├── attendance/     # Attendance tracker
-│   ├── assignments/    # Assignment tracker
-│   ├── timetable/      # Weekly timetable
-│   ├── cgpa/           # CGPA calculator
-│   ├── profile/        # User profile
-│   ├── docs/           # V1 documentation page
-│   ├── login/          # Login page
-│   ├── signup/         # Signup page
-│   └── forgot-password/# Password recovery
-├── components/         # Reusable UI components
-├── services/           # Supabase CRUD service modules
-├── store/              # Zustand global state
-├── lib/                # Supabase client config
-├── types/              # TypeScript type definitions
-├── utils/              # Calculation utilities (GPA, attendance)
-├── supabase/           # Migration SQL files
-└── public/             # Static assets
+├── app/                # Next.js App Router folders
+│   ├── dashboard/      # Unified landing cockpit
+│   ├── attendance/     # Attendance tracker logic
+│   ├── assignments/    # Assignments tracker logic
+│   ├── timetable/      # Weekly grid timetables
+│   ├── cgpa/           # Credit GPA roadmap charts
+│   ├── profile/        # Gamified student settings page
+│   └── docs/           # Interactive V1 product docs
+├── components/         # Reusable presentation atoms & Sidebar Layout
+├── services/           # Supabase DB operations & Virtual Demo Interceptors
+├── store/              # Zustand Auth & Semester stores
+├── lib/                # Database clients & Middleware checks
+├── types/              # Type contract definitions (e.g. Profile)
+├── supabase/           # SQL migration versionings
+└── public/             # Branding icons & screenshots
 ```
-
-### Key Design Decisions
-
-- **Dynamic calculations only** — Attendance %, SGPA, CGPA are never stored in the database; always computed client-side.
-- **Session-cached auth** — Service modules use `getSession()` instead of `getUser()` to avoid redundant network round-trips.
-- **Row Level Security** — Every table enforces user-scoped access via Supabase RLS policies.
-- **Optimistic UI** — Assignment toggles and attendance logging update the UI instantly before server confirmation.
 
 ---
 
 ## 🗄 Database Schema
 
 ### `profiles`
+Every user profile tracks default settings alongside optional, recommended identity badges:
 ```
-id (UUID, PK) • full_name • college_name • course • semester • created_at
+id (UUID, PK) • full_name (text) • college_name (text) • course (text) • semester (integer) • avatar_url (text) • usn (text) • mobile_number (text) • bio (varchar 200) • linkedin_url (text) • github_url (text) • created_at (timestamp)
 ```
 
 ### `subjects`
 ```
-id (UUID, PK) • user_id (FK) • semester • subject_name • total_classes • attended_classes • created_at
+id (UUID, PK) • user_id (FK to profiles) • semester (integer) • subject_name (text) • total_classes (integer) • attended_classes (integer) • created_at (timestamp)
 ```
 
 ### `assignments`
 ```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • title • description • due_date • priority • completed • created_at
+id (UUID, PK) • user_id (FK) • subject_id (FK) • semester (integer) • title (text) • description (text) • due_date (timestamp) • priority ('Low'|'Medium'|'High') • completed (boolean) • created_at (timestamp)
 ```
 
 ### `timetable`
 ```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • day • start_time • end_time • room • created_at
+id (UUID, PK) • user_id (FK) • subject_id (FK) • semester (integer) • day ('Monday'..'Sunday') • start_time (text HH:MM) • end_time (text HH:MM) • room (text) • created_at (timestamp)
 ```
-
-### `grades`
-```
-id (UUID, PK) • user_id (FK) • semester • subject_name • credits • grade • created_at
-```
-
-### `exams`
-```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • exam_type • exam_date • created_at
-```
-
-> [!IMPORTANT]
-> Calculated values (attendance %, SGPA, CGPA) are **never stored** — always computed dynamically on the client.
-
----
-
-## 🎨 Design System
-
-### Inspiration
-Visually inspired by **Linear**, **Notion**, **Vercel**, and **Raycast**.
-
-### Color Palette
-
-| Token | Dark Mode | Light Mode |
-|---|---|---|
-| Background | `#0a0a0c` | `#ffffff` |
-| Card | `#101014` | `#f8f8fa` |
-| Primary | `#3b82f6` | `#2563eb` |
-| Border | `#222227` | `#e2e2e8` |
-
-### Typography
-- **Primary**: Geist Sans — clean geometric sans-serif
-- **Monospace**: Geist Mono — for code and clock displays
-
-### Themes
-Ships with both **Dark Mode** (default) and **Light Mode**. Theme is persisted to `localStorage` and toggled from the sidebar.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+* **Node.js** >= 18.0
+* **npm** or **yarn**
+* A **Supabase** instance (free cloud tier or local docker docker-compose is fine)
 
-- **Node.js** >= 18
-- **npm** or **yarn**
-- A **Supabase** project (free tier works)
+### Local Installation
 
-### Installation
+1. **Clone the code:**
+   ```bash
+   git clone https://github.com/rkravikr/campus-core.git
+   cd campus-core
+   ```
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/rkravikr/campus-core.git
-cd campus-core
+2. **Install all packages:**
+   ```bash
+   npm install
+   ```
 
-# 2. Install dependencies
-npm install
+3. **Configure environment keys:**
+   Duplicate the example config and name it `.env.local`:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   Add your keys inside `.env.local`:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-# 3. Set up environment variables
-cp .env.example .env.local
-```
+4. **Sync schemas & database triggers:**
+   Apply migrations directly inside the Supabase SQL editor using files located in `supabase/migrations/` sequentially, or push them via the Supabase CLI:
+   ```bash
+   npx supabase db push
+   ```
 
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### Database Setup
-
-Run the SQL migrations in your Supabase SQL editor (files in `supabase/migrations/`), or apply them via the Supabase CLI:
-
-```bash
-npx supabase db push
-```
-
-### Development
-
-```bash
-# Start the dev server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
-
----
-
-## 📐 Development Principles
-
-| Principle | Description |
-|---|---|
-| **Ship Fast** | Build, ship, iterate. Don't endlessly redesign. |
-| **Focus on UX** | A polished experience matters more than feature count. |
-| **Keep Features Focused** | Every feature solves a real student problem. |
-| **Mobile-First** | Most students use their phones. Design for mobile first. |
-| **Consistency** | Consistent spacing, typography, and interactions create premium feel. |
-| **Performance** | Fast initial loads, optimized rendering, lazy loading where needed. |
+5. **Fire up the hot-reload server:**
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3000` to begin.
 
 ---
 
 ## 🗺 Roadmap
 
-### V2 — AI & Intelligence
-- [ ] AI study planner
-- [ ] AI notes summarizer
-- [ ] Smart attendance predictions
-- [ ] Exam preparation assistant
-- [ ] Notes uploads & file sharing
-- [ ] Push notifications
-- [ ] Calendar sync
+### V1.1.0 (Current)
+* [x] Semester Context Swapping (Desktop + Mobile)
+* [x] Interactive Profile Avatar uploads (Supabase Storage integration)
+* [x] Virtual Guest demo sandbox mode (localStorage bypasses database)
+* [x] Optional recommended identity fields (USN, Mobile, Bio, LinkedIn, GitHub)
+* [x] Gamified Profile completeness indicators
 
-### V3 — Community & Social
-- [ ] Student communities
-- [ ] Shared resources
-- [ ] Public profiles
-- [ ] Collaborative spaces
-- [ ] College ecosystems
-- [ ] Placement tracker
+### V2.0.0 — Intelligence Hub
+* [ ] AI Course companion & note synthesizers
+* [ ] Smart prediction modules for semester attendance warnings
+* [ ] Persistent push notification integrations
+* [ ] Live calendar exports (.ics / Google Calendar linkups)
+
+### V3.0.0 — Social Frameworks
+* [ ] Peer collaborative study hubs & shared subject repositories
+* [ ] College community ecosystem modules
+* [ ] Visual placement trackers
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues and pull requests.
+Contributions are welcome! Feel free to raise issues or fork the code:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. **Fork the repo** and create your branch:
+   ```bash
+   git checkout -b feature/cool-new-idea
+   ```
+2. **Commit your modifications** using clean, descriptive comments:
+   ```bash
+   git commit -m 'feat: added visual sparkline trendlines to dashboard'
+   ```
+3. **Push up to your fork** and submit a Pull Request.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This application is released under the **MIT License**. Check out [LICENSE](LICENSE) for more details.
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/rkravikr">@rkravikr</a> — Campus Core V1</sub>
+  <sub>Engineered with ❤️ by <a href="https://github.com/rkravikr">@rkravikr</a> and Antigravity AI.</sub>
 </p>

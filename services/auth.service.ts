@@ -45,6 +45,9 @@ export const authService = {
 
       if (typeof window !== "undefined") {
         localStorage.setItem("campus_core_demo_session", JSON.stringify(mockSession));
+        // Set a cookie so the server-side middleware can detect the demo session
+        // and skip the Supabase auth check (localStorage is client-only)
+        document.cookie = "campus_core_demo=true; path=/; max-age=3600; SameSite=Lax";
       }
 
       return { data: { session: mockSession as any, user: mockSession.user as any }, error: null };
@@ -111,6 +114,8 @@ export const authService = {
     if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
       const { clearDemoData } = await import("./demo.data");
       clearDemoData();
+      // Clear the demo cookie so middleware stops bypassing auth
+      document.cookie = "campus_core_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       return;
     }
     const { error } = await supabase.auth.signOut();
@@ -183,9 +188,58 @@ export const authService = {
     if (typeof window !== "undefined" && localStorage.getItem("campus_core_demo_session")) {
       const { clearDemoData } = await import("./demo.data");
       clearDemoData();
+      document.cookie = "campus_core_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       return;
     }
     const { error } = await supabase.rpc("delete_user_account");
     if (error) throw error;
+  },
+
+  /**
+   * Uploads a profile avatar to Supabase Storage.
+   * Files are stored at `avatars/{userId}/avatar.{ext}` and upserted on re-upload.
+   * Returns the public URL of the uploaded avatar.
+   */
+  async uploadAvatar(userId: string, file: File): Promise<string> {
+    // Demo sandbox: convert to base64 and store in localStorage
+    if (userId === "demo-user-id") {
+      const { setDemoAvatar } = await import("./demo.data");
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          setDemoAvatar(base64);
+          resolve(base64);
+        };
+        reader.onerror = () => reject(new Error("Failed to read file"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const filePath = `${userId}/avatar.${fileExt}`;
+
+    const { error } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, { upsert: true });
+
+    if (error) throw error;
+
+    const { data: urlData } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(filePath);
+
+    // Append cache-buster to force browser to re-fetch after update
+    return `${urlData.publicUrl}?t=${Date.now()}`;
+  },
+
+  /**
+   * Returns the public URL for a given avatar storage path.
+   */
+  getAvatarUrl(path: string): string {
+    if (path.startsWith("data:")) return path; // Demo base64 data URL
+    if (path.startsWith("http")) return path;  // Already a full URL
+    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+    return data.publicUrl;
   },
 };

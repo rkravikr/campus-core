@@ -31,9 +31,6 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Refresh token if expired
-  const { data: { user } } = await supabase.auth.getUser();
-
   const path = request.nextUrl.pathname;
 
   // Define route classifications
@@ -46,6 +43,23 @@ export async function updateSession(request: NextRequest) {
                            path.startsWith("/cgpa") || 
                            path.startsWith("/profile") || 
                            path.startsWith("/settings");
+
+  // Allow demo sessions through — the demo session lives entirely in
+  // the browser (localStorage + Zustand), so supabase.auth.getUser()
+  // would return null and cause an infinite redirect loop.
+  const isDemoSession = request.cookies.get("campus_core_demo")?.value === "true";
+  if (isDemoSession) {
+    // If demo user hits login/signup or landing, send them to dashboard
+    if (isAuthRoute || path === "/") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    return response;
+  }
+
+  // Refresh token if expired (only for real Supabase sessions)
+  const { data: { user } } = await supabase.auth.getUser();
 
   // Redirect rules
   if (!user && isProtectedRoute) {

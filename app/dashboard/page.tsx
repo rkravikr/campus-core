@@ -448,7 +448,7 @@ export default function DashboardPage() {
                            transition={{ duration: 1.2, ease: "easeInOut" }}
                          />
                          <circle cx="100" cy={30 - (attendancePercentage * 0.24)} r="2" fill="#3b82f6" className="animate-ping" />
-                         <circle cx="100" cy={30 - (attendancePercentage * 0.24)} r="1.5" fill="#ffffff" />
+                         <circle cx="100" cy={30 - (attendancePercentage * 0.24)} r="1.5" fill="#3b82f6" stroke="#ffffff" strokeWidth="0.5" />
                        </svg>
                        <div className="absolute top-1 right-2 bg-neutral-900/90 border border-border/80 rounded px-1.5 py-0.5 text-[6px] font-bold text-primary flex items-center gap-0.5 pointer-events-none uppercase tracking-widest">
                          <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />

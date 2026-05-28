@@ -205,6 +205,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
         }
       });
+      // Also clear demo session cookie
+      document.cookie = "campus_core_demo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       
       // 2. Clear Zustand store
       useAuthStore.getState().clearSession();
@@ -419,17 +421,35 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* User Details / Avatar */}
           <div className={`flex items-center justify-between gap-2 ${isCollapsed ? "flex-col items-center px-0" : "px-2"}`}>
             {!isCollapsed ? (
-              <div className="flex flex-col text-left truncate max-w-[110px]">
-                <span className="text-xs font-bold text-white truncate">
-                  {profile?.full_name || user?.email?.split("@")[0] || "Student"}
-                </span>
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {profile?.college_name || "College Student"}
-                </span>
+              <div className="flex items-center gap-2.5 truncate max-w-[130px]">
+                {/* Mini avatar in expanded view */}
+                <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden border border-primary/20">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center text-white text-[10px] font-bold">
+                      {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col text-left truncate">
+                  <span className="text-xs font-bold text-white truncate">
+                    {profile?.full_name || user?.email?.split("@")[0] || "Student"}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground truncate">
+                    {profile?.college_name || "College Student"}
+                  </span>
+                </div>
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xs font-bold shrink-0 cursor-default" title={profile?.full_name || "Student"}>
-                {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
+              <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden border border-primary/20 cursor-default" title={profile?.full_name || "Student"}>
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                    {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
+                  </div>
+                )}
               </div>
             )}
 

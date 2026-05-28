@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuthStore } from "@/store/authStore";
 import { authService } from "@/services/auth.service";
@@ -22,7 +22,11 @@ import {
   GraduationCap,
   Trash2,
   Edit3,
-  Eye
+  Eye,
+  Camera,
+  Phone,
+  FileText,
+  Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -37,6 +41,26 @@ const profileSchema = z.object({
     .int()
     .min(1, "Semester must be between 1 and 8")
     .max(8, "Semester must be between 1 and 8"),
+  usn: z.string().optional().nullable().or(z.literal("")),
+  mobileNumber: z
+    .string()
+    .regex(/^$|^\+?[0-9\s-]{10,15}$/, "Invalid mobile number format")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  bio: z.string().max(200, "Bio must be under 200 characters").optional().nullable().or(z.literal("")),
+  linkedinUrl: z
+    .string()
+    .regex(/^$|^https:\/\/(www\.)?linkedin\.com\/.*$/, "Must be a valid LinkedIn profile URL")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  githubUrl: z
+    .string()
+    .regex(/^$|^https:\/\/(www\.)?github\.com\/.*$/, "Must be a valid GitHub profile URL")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -55,6 +79,33 @@ export default function ProfilePage() {
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  // Avatar upload state
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+
+  // Profile Completeness calculation
+  const calculateCompleteness = () => {
+    if (!profile) return 0;
+    let score = 0;
+    // Required fields: 15% each (60% max)
+    if (profile.full_name) score += 15;
+    if (profile.college_name) score += 15;
+    if (profile.course) score += 15;
+    if (profile.semester) score += 15;
+    
+    // Optional recommended fields: 8% each (40% max)
+    if (profile.usn) score += 8;
+    if (profile.mobile_number) score += 8;
+    if (profile.bio) score += 8;
+    if (profile.linkedin_url) score += 8;
+    if (profile.github_url) score += 8;
+    
+    return Math.min(score, 100);
+  };
+
+  const completeness = calculateCompleteness();
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmationText !== "DELETE") return;
@@ -92,6 +143,11 @@ export default function ProfilePage() {
         collegeName: profile.college_name || "",
         course: profile.course || "",
         semester: profile.semester || 1,
+        usn: profile.usn || "",
+        mobileNumber: profile.mobile_number || "",
+        bio: profile.bio || "",
+        linkedinUrl: profile.linkedin_url || "",
+        githubUrl: profile.github_url || "",
       });
     }
   }, [profile, reset]);
@@ -108,6 +164,11 @@ export default function ProfilePage() {
         college_name: values.collegeName,
         course: values.course,
         semester: values.semester,
+        usn: values.usn || null,
+        mobile_number: values.mobileNumber || null,
+        bio: values.bio || null,
+        linkedin_url: values.linkedinUrl || null,
+        github_url: values.githubUrl || null,
       });
 
       // 2. Refetch profile in Zustand store for real-time app sync
@@ -179,10 +240,84 @@ export default function ProfilePage() {
             <div className="glass-card rounded-[20px] border border-border p-6 flex flex-col items-center justify-between text-center relative overflow-hidden h-max sticky top-6">
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full filter blur-xl pointer-events-none" />
               
-              {/* Round Avatar Icon */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-primary/20 mb-4">
-                {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
+              {/* Round Avatar with Upload Overlay */}
+              <div className="relative group mb-4">
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file || !user) return;
+                    
+                    // Validate file size (2MB max)
+                    if (file.size > 2 * 1024 * 1024) {
+                      setAvatarError("Image must be under 2MB.");
+                      setTimeout(() => setAvatarError(null), 4000);
+                      return;
+                    }
+
+                    setIsUploadingAvatar(true);
+                    setAvatarError(null);
+                    try {
+                      const avatarUrl = await authService.uploadAvatar(user.id, file);
+                      await authService.updateProfile(user.id, { avatar_url: avatarUrl });
+                      await fetchProfile(user.id);
+                    } catch (err: any) {
+                      console.error("Avatar upload failed:", err);
+                      setAvatarError(err.message || "Failed to upload avatar.");
+                      setTimeout(() => setAvatarError(null), 4000);
+                    } finally {
+                      setIsUploadingAvatar(false);
+                      // Reset file input so same file can be re-selected
+                      if (avatarInputRef.current) avatarInputRef.current.value = "";
+                    }
+                  }}
+                />
+                
+                {/* Avatar circle */}
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center text-white font-extrabold text-2xl shadow-lg shadow-primary/20 cursor-pointer relative overflow-hidden border-2 border-primary/20 group-hover:border-primary/50 transition-all"
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  {profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name || "Avatar"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-tr from-primary to-blue-400 flex items-center justify-center">
+                      {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || "S"}
+                    </div>
+                  )}
+
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-5 h-5 text-white animate-spin" />
+                    ) : (
+                      <Camera className="w-5 h-5 text-white" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Upload status indicator */}
+                {isUploadingAvatar && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-primary text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
+                    Uploading...
+                  </div>
+                )}
               </div>
+
+              {/* Avatar error message */}
+              {avatarError && (
+                <p className="text-[10px] text-destructive font-semibold flex items-center gap-1 mb-2">
+                  <AlertCircle className="w-3 h-3" />
+                  {avatarError}
+                </p>
+              )}
 
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
                 {profile?.full_name || "Active Student"}
@@ -206,6 +341,39 @@ export default function ProfilePage() {
                     {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "Active"}
                   </span>
                 </div>
+              </div>
+
+              {/* Profile Completeness progress meter */}
+              <div className="w-full border-t border-border/40 mt-4 pt-4 space-y-2">
+                <div className="flex items-center justify-between text-[10px] text-left">
+                  <span className="text-muted-foreground uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-primary animate-pulse" />
+                    Completeness:
+                  </span>
+                  <span className={`font-black tracking-wider ${completeness === 100 ? "text-green-400" : "text-primary"}`}>
+                    {completeness}%
+                  </span>
+                </div>
+                
+                {/* Progress track */}
+                <div className="w-full h-1.5 bg-neutral-950 rounded-full overflow-hidden border border-border/20 relative">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${completeness}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-primary via-blue-500 to-indigo-500 rounded-full"
+                  />
+                </div>
+                
+                {completeness < 100 ? (
+                  <p className="text-[8px] text-muted-foreground leading-normal text-left font-medium">
+                    💡 Tip: Add missing optional details below to reach 100%!
+                  </p>
+                ) : (
+                  <div className="flex items-center justify-center gap-1 text-[8px] text-green-400 font-bold bg-green-500/10 py-1 px-2 rounded-full border border-green-500/20 uppercase tracking-wider">
+                    ✓ Profile Complete
+                  </div>
+                )}
               </div>
 
               <button
@@ -278,6 +446,139 @@ export default function ProfilePage() {
                     </p>
                   )}
                 </div>
+
+                {/* Bio / Tagline */}
+                <div className="space-y-1.5">
+                  <label htmlFor="bio" className="text-xs font-semibold text-neutral-300 flex items-center justify-between">
+                    <span>Bio / Tagline</span>
+                    {!profile?.bio && (
+                      <span className="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                        <Sparkles className="w-2.5 h-2.5 shrink-0" /> Recommended
+                      </span>
+                    )}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute top-3 left-3 text-muted-foreground">
+                      <FileText className="w-4 h-4" />
+                    </span>
+                    <textarea
+                      id="bio"
+                      disabled={isLoading || !isEditing}
+                      className="w-full h-20 pl-10 pr-4 py-2.5 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors resize-none"
+                      placeholder="e.g. Aspiring systems builder | CS Sophomore"
+                      {...register("bio")}
+                    />
+                  </div>
+                  {errors.bio && (
+                    <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.bio.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Mobile Number */}
+                <div className="space-y-1.5">
+                  <label htmlFor="mobileNumber" className="text-xs font-semibold text-neutral-300 flex items-center justify-between">
+                    <span>Mobile Number</span>
+                    {!profile?.mobile_number && (
+                      <span className="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                        <Sparkles className="w-2.5 h-2.5 shrink-0" /> Recommended
+                      </span>
+                    )}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Phone className="w-4 h-4" />
+                    </span>
+                    <input
+                      id="mobileNumber"
+                      type="tel"
+                      disabled={isLoading || !isEditing}
+                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      placeholder="e.g. +1 555-0199"
+                      {...register("mobileNumber")}
+                    />
+                  </div>
+                  {errors.mobileNumber && (
+                    <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.mobileNumber.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Links Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* LinkedIn */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="linkedinUrl" className="text-xs font-semibold text-neutral-300 flex items-center justify-between">
+                      <span>LinkedIn Profile</span>
+                      {!profile?.linkedin_url && (
+                        <span className="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                          <Sparkles className="w-2.5 h-2.5 shrink-0" /> Recommended
+                        </span>
+                      )}
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                          <rect x="2" y="9" width="4" height="12" />
+                          <circle cx="4" cy="4" r="2" />
+                        </svg>
+                      </span>
+                      <input
+                        id="linkedinUrl"
+                        type="url"
+                        disabled={isLoading || !isEditing}
+                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        placeholder="e.g. https://linkedin.com/in/alex"
+                        {...register("linkedinUrl")}
+                      />
+                    </div>
+                    {errors.linkedinUrl && (
+                      <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {errors.linkedinUrl.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* GitHub */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="githubUrl" className="text-xs font-semibold text-neutral-300 flex items-center justify-between">
+                      <span>GitHub Profile</span>
+                      {!profile?.github_url && (
+                        <span className="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                          <Sparkles className="w-2.5 h-2.5 shrink-0" /> Recommended
+                        </span>
+                      )}
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                          <path d="M9 18c-4.51 2-5-2-7-2" />
+                        </svg>
+                      </span>
+                      <input
+                        id="githubUrl"
+                        type="url"
+                        disabled={isLoading || !isEditing}
+                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        placeholder="e.g. https://github.com/alex"
+                        {...register("githubUrl")}
+                      />
+                    </div>
+                    {errors.githubUrl && (
+                      <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {errors.githubUrl.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </motion.div>
 
               {/* Card 2: Academic Details */}
@@ -319,6 +620,37 @@ export default function ProfilePage() {
                     <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
                       <AlertCircle className="w-3 h-3" />
                       {errors.collegeName.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* USN */}
+                <div className="space-y-1.5">
+                  <label htmlFor="usn" className="text-xs font-semibold text-neutral-300 flex items-center justify-between">
+                    <span>University Serial Number (USN)</span>
+                    {!profile?.usn && (
+                      <span className="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                        <Sparkles className="w-2.5 h-2.5 shrink-0" /> Recommended
+                      </span>
+                    )}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Hash className="w-4 h-4" />
+                    </span>
+                    <input
+                      id="usn"
+                      type="text"
+                      disabled={isLoading || !isEditing}
+                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      placeholder="e.g. 1MS21CS001"
+                      {...register("usn")}
+                    />
+                  </div>
+                  {errors.usn && (
+                    <p className="text-[10px] text-destructive font-medium flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.usn.message}
                     </p>
                   )}
                 </div>
