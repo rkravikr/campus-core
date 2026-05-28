@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  🚀 <strong><a href="https://campuscore.app">Launch Live App</a></strong> •
+  🚀 <strong><a href="https://campus-core-jet.vercel.app/">Launch Live App</a></strong> •
   ⭐ <strong><a href="#-getting-started">Star The Repo</a></strong>
 </p>
 
