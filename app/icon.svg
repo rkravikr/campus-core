@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Definitions for Gradients and Glow Filters -->
+  <defs>
+    <!-- Background Radial Glow -->
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#07162c" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#060608" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- Electric Blue Gradient -->
+    <linearGradient id="electric-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#0055ff"/>
+    </linearGradient>
+
+    <!-- Premium Dark Blue Gradient -->
+    <linearGradient id="dark-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0055ff" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#002b99"/>
+      <stop offset="100%" stop-color="#030b20"/>
+    </linearGradient>
+
+    <!-- Fine Glow Filter for Electric Blue -->
+    <filter id="electric-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Ambient Shadow/Glow -->
+    <filter id="ambient-glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="35" result="blur"/>
+    </filter>
+  </defs>
+
+  <!-- Deep Tech Workspace Background -->
+  <rect width="512" height="512" rx="112" fill="#060608"/>
+  <rect width="512" height="512" rx="112" fill="url(#bg-glow)"/>
+
+  <!-- High-Tech Structural Grid Background (Subtle) -->
+  <g opacity="0.04" stroke="#ffffff" stroke-width="1">
+    <line x1="256" y1="0" x2="256" y2="512"/>
+    <line x1="0" y1="256" x2="512" y2="256"/>
+    <rect x="76" y="76" width="360" height="360" rx="36" stroke-dasharray="4 8"/>
+    <circle cx="256" cy="256" r="180" stroke-dasharray="2 10"/>
+  </g>
+
+  <!-- Ambient Electric Glow Leak -->
+  <circle cx="165" cy="256" r="60" fill="#00d2ff" opacity="0.1" filter="url(#ambient-glow)"/>
+  <circle cx="347" cy="256" r="60" fill="#002b99" opacity="0.15" filter="url(#ambient-glow)"/>
+
+  <!-- Left 'C' - Campus (Electric Blue - Glowing) -->
+  <path d="M 230,165 C 135,165 96,210 96,256 C 96,302 135,347 230,347" 
+        stroke="url(#electric-blue-grad)" 
+        stroke-width="34" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        filter="url(#electric-glow)"
+  />
+  
+  <!-- Left 'C' Inner Reflective Core Accent -->
+  <path d="M 220,185 C 155,185 130,215 130,256 C 130,297 155,327 220,327" 
+        stroke="#ffffff" 
+        stroke-width="4" 
+        stroke-linecap="round" 
+        fill="none"
+        opacity="0.25"
+  />
+
+  <!-- Right 'C' - Core (Premium Dark Blue - Sleek & Deep) -->
+  <path d="M 416,165 C 321,165 282,210 282,256 C 282,302 321,347 416,347" 
+        stroke="url(#dark-blue-grad)" 
+        stroke-width="34" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        fill="none"
+        stroke-opacity="0.95"
+  />
+  
+  <!-- Right 'C' Highlight Trim -->
+  <path d="M 406,185 C 341,185 316,215 316,256 C 316,297 341,327 406,327" 
+        stroke="#00d2ff" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        fill="none"
+        opacity="0.35"
+  />
+
+  <!-- Small high-tech divider nodes in the center spacing -->
+  <g opacity="0.45" fill="url(#electric-blue-grad)">
+    <circle cx="256" cy="216" r="4" filter="url(#electric-glow)"/>
+    <circle cx="256" cy="256" r="5" filter="url(#electric-glow)"/>
+    <circle cx="256" cy="296" r="4" filter="url(#electric-glow)"/>
+  </g>
+</svg>
