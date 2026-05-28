@@ -75,17 +75,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }, 3000);
 
     // 1. Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then((res: any) => {
+      const session = res.data?.session || null;
       clearTimeout(timeout);
       get().setSession(session);
-    }).catch((err) => {
+    }).catch((err: any) => {
       clearTimeout(timeout);
       set({ error: err.message || "Failed to get auth session", isLoading: false });
     });
 
     // 2. Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: any, session: any) => {
         if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
           await get().setSession(session);
         } else if (event === "SIGNED_OUT") {
