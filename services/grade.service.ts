@@ -7,15 +7,18 @@ export const gradeService = {
   /**
    * Fetches all grade entries for the authenticated user.
    */
-  async getGrades(): Promise<Grade[]> {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("Unauthenticated");
+  async getGrades(userId?: string): Promise<Grade[]> {
+    let uId = userId;
+    if (!uId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      uId = session?.user?.id;
+    }
+    if (!uId) throw new Error("Unauthenticated");
 
     const { data, error } = await supabase
       .from("grades")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", uId)
       .order("semester", { ascending: true })
       .order("created_at", { ascending: true });
 

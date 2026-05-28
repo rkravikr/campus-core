@@ -13,15 +13,18 @@ export const timetableService = {
   /**
    * Fetches the entire weekly timetable for the authenticated user, joining subject details.
    */
-  async getTimetable(): Promise<TimetableEntryWithSubject[]> {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("Unauthenticated");
+  async getTimetable(userId?: string): Promise<TimetableEntryWithSubject[]> {
+    let uId = userId;
+    if (!uId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      uId = session?.user?.id;
+    }
+    if (!uId) throw new Error("Unauthenticated");
 
     const { data, error } = await supabase
       .from("timetable")
       .select("*, subjects(subject_name)")
-      .eq("user_id", user.id)
+      .eq("user_id", uId)
       .order("start_time", { ascending: true });
 
     if (error) throw error;

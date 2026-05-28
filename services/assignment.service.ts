@@ -13,15 +13,18 @@ export const assignmentService = {
   /**
    * Fetches all assignments for the authenticated user, joining the subject details.
    */
-  async getAssignments(): Promise<AssignmentWithSubject[]> {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("Unauthenticated");
+  async getAssignments(userId?: string): Promise<AssignmentWithSubject[]> {
+    let uId = userId;
+    if (!uId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      uId = session?.user?.id;
+    }
+    if (!uId) throw new Error("Unauthenticated");
 
     const { data, error } = await supabase
       .from("assignments")
       .select("*, subjects(subject_name)")
-      .eq("user_id", user.id)
+      .eq("user_id", uId)
       .order("due_date", { ascending: true });
 
     if (error) throw error;

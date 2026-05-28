@@ -74,11 +74,12 @@ export default function DashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
+      const uId = user?.id;
       const fetchPromise = Promise.all([
-        attendanceService.getSubjects(),
-        assignmentService.getAssignments(),
-        timetableService.getTimetable(),
-        gradeService.getGrades(),
+        attendanceService.getSubjects(uId),
+        assignmentService.getAssignments(uId),
+        timetableService.getTimetable(uId),
+        gradeService.getGrades(uId),
       ]);
 
       const timeoutPromise = new Promise((_, reject) => 

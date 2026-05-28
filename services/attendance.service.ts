@@ -7,15 +7,18 @@ export const attendanceService = {
   /**
    * Fetches all subjects for the authenticated user.
    */
-  async getSubjects(): Promise<Subject[]> {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    if (!user) throw new Error("Unauthenticated");
+  async getSubjects(userId?: string): Promise<Subject[]> {
+    let uId = userId;
+    if (!uId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      uId = session?.user?.id;
+    }
+    if (!uId) throw new Error("Unauthenticated");
 
     const { data, error } = await supabase
       .from("subjects")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", uId)
       .order("subject_name", { ascending: true });
 
     if (error) throw error;
