@@ -13,7 +13,7 @@ export const timetableService = {
   /**
    * Fetches the entire weekly timetable for the authenticated user, joining subject details.
    */
-  async getTimetable(userId?: string): Promise<TimetableEntryWithSubject[]> {
+  async getTimetable(userId?: string, semester?: number): Promise<TimetableEntryWithSubject[]> {
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -21,10 +21,21 @@ export const timetableService = {
     }
     if (!uId) throw new Error("Unauthenticated");
 
+    let activeSem = semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", uId)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
+
     const { data, error } = await supabase
       .from("timetable")
       .select("*, subjects(subject_name)")
       .eq("user_id", uId)
+      .eq("semester", activeSem)
       .order("start_time", { ascending: true });
 
     if (error) throw error;
@@ -35,11 +46,21 @@ export const timetableService = {
    * Creates a new class entry in the weekly timetable.
    */
   async addTimetableEntry(
-    entry: Omit<TimetableEntry, "id" | "user_id" | "created_at">
+    entry: Omit<TimetableEntry, "id" | "user_id" | "created_at" | "semester"> & { semester?: number }
   ): Promise<TimetableEntryWithSubject> {
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
+
+    let activeSem = entry.semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", user.id)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
 
     const { data, error } = await supabase
       .from("timetable")
@@ -50,6 +71,7 @@ export const timetableService = {
         start_time: entry.start_time,
         end_time: entry.end_time,
         room: entry.room,
+        semester: activeSem,
       })
       .select("*, subjects(subject_name)")
       .single();

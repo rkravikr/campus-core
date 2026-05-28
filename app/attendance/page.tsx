@@ -11,7 +11,10 @@ import { Plus, Percent, AlertCircle, Sparkles, BookOpen, Loader2 } from "lucide-
 import { motion, AnimatePresence } from "framer-motion";
 import { calculateAttendanceStats } from "@/utils/attendance";
 
+import { useAuthStore } from "@/store/authStore";
+
 export default function AttendancePage() {
+  const { profile } = useAuthStore();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,7 @@ export default function AttendancePage() {
 
   useEffect(() => {
     fetchSubjects();
-  }, []);
+  }, [profile?.semester]);
 
   // Aggregate Calculations
   const totalClassesCombined = subjects.reduce((sum, s) => sum + s.total_classes, 0);

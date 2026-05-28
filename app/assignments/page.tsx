@@ -25,7 +25,10 @@ import { motion, AnimatePresence } from "framer-motion";
 type StatusFilter = "All" | "Pending" | "Completed";
 type PriorityFilter = "All" | "High" | "Medium" | "Low";
 
+import { useAuthStore } from "@/store/authStore";
+
 export default function AssignmentsPage() {
+  const { profile } = useAuthStore();
   const [assignments, setAssignments] = useState<AssignmentWithSubject[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,7 +64,7 @@ export default function AssignmentsPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [profile?.semester]);
 
   // Callbacks
   const handleAddSuccess = (newAssignment: AssignmentWithSubject) => {

@@ -13,6 +13,7 @@ export interface Subject {
   subject_name: string;
   total_classes: number;
   attended_classes: number;
+  semester: number;
   created_at: string;
 }
 
@@ -27,6 +28,7 @@ export interface Assignment {
   due_date: string; // ISO timestamp
   priority: AssignmentPriority;
   completed: boolean;
+  semester: number;
   created_at: string;
 }
 
@@ -36,6 +38,7 @@ export interface Exam {
   subject_id: string | null; // linked subject
   exam_type: string; // e.g. Midterm, Endterm, Quiz
   exam_date: string; // ISO timestamp
+  semester: number;
   created_at: string;
 }
 
@@ -49,6 +52,7 @@ export interface TimetableEntry {
   start_time: string; // format: HH:MM
   end_time: string; // format: HH:MM
   room: string | null;
+  semester: number;
   created_at: string;
 }
 

@@ -75,6 +75,19 @@ Log semester grades with credit hours and letter grades. Get automatic SGPA per 
 - Semester performance roadmap
 - Earned vs attempted credits
 
+### ⌨️ Command Menu & Floating Actions
+Navigate and execute core student workflows instantly using optimized keyboard shortcuts and springs.
+
+- Global `Ctrl+K` / `Cmd+K` command search palette
+- Responsive floating speed-dial button
+- In-context logging forms and dynamic modal overlays
+
+### 🔄 Multi-Semester Data Isolation
+Completing one semester and advancing to the next isolates your academic modules cleanly under the selected semester.
+
+- Scoped subjects, timetable schedules, assignments, and exams based on your active semester profile
+- Change back to previous semesters at any time to seamlessly restore and view all old semester details
+
 ### 🎯 Dashboard
 A unified command center. See attendance health, CGPA progress, pending assignments, today's lectures, and a live 24-hour clock — all at a glance.
 
@@ -83,13 +96,13 @@ A unified command center. See attendance health, CGPA progress, pending assignme
 - Upcoming deliverables checklist
 - Live 24h clock with date
 
-### 🔐 Authentication
-Secure email/password and Google OAuth login. Session persistence with Supabase Auth, protected routes, and automatic token refresh.
+### 🔐 Authentication & Danger Zone
+Secure email/password and Google OAuth login. Account security includes a complete data purge safety switch.
 
 - Email & password signup/login
 - Google OAuth integration
 - Persistent sessions (tab-switch safe)
-- Protected route middleware
+- **Danger Zone**: Irreversible account deletion requiring manual typing verification to permanently cascade-wipe all profile and academic data from the database
 
 ---
 
@@ -171,17 +184,17 @@ id (UUID, PK) • full_name • college_name • course • semester • created
 
 ### `subjects`
 ```
-id (UUID, PK) • user_id (FK) • subject_name • total_classes • attended_classes • created_at
+id (UUID, PK) • user_id (FK) • semester • subject_name • total_classes • attended_classes • created_at
 ```
 
 ### `assignments`
 ```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • title • description • due_date • priority • completed • created_at
+id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • title • description • due_date • priority • completed • created_at
 ```
 
 ### `timetable`
 ```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • day • start_time • end_time • room • created_at
+id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • day • start_time • end_time • room • created_at
 ```
 
 ### `grades`
@@ -191,7 +204,7 @@ id (UUID, PK) • user_id (FK) • semester • subject_name • credits • gra
 
 ### `exams`
 ```
-id (UUID, PK) • user_id (FK) • subject_id (FK) • exam_type • exam_date • created_at
+id (UUID, PK) • user_id (FK) • subject_id (FK) • semester • exam_type • exam_date • created_at
 ```
 
 > [!IMPORTANT]

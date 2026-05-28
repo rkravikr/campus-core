@@ -7,7 +7,7 @@ export const attendanceService = {
   /**
    * Fetches all subjects for the authenticated user.
    */
-  async getSubjects(userId?: string): Promise<Subject[]> {
+  async getSubjects(userId?: string, semester?: number): Promise<Subject[]> {
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -15,10 +15,21 @@ export const attendanceService = {
     }
     if (!uId) throw new Error("Unauthenticated");
 
+    let activeSem = semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", uId)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
+
     const { data, error } = await supabase
       .from("subjects")
       .select("*")
       .eq("user_id", uId)
+      .eq("semester", activeSem)
       .order("subject_name", { ascending: true });
 
     if (error) throw error;
@@ -28,10 +39,20 @@ export const attendanceService = {
   /**
    * Adds a new subject to track.
    */
-  async addSubject(subjectName: string): Promise<Subject> {
+  async addSubject(subjectName: string, semester?: number): Promise<Subject> {
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
+
+    let activeSem = semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", user.id)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
 
     const { data, error } = await supabase
       .from("subjects")
@@ -40,6 +61,7 @@ export const attendanceService = {
         subject_name: subjectName,
         total_classes: 0,
         attended_classes: 0,
+        semester: activeSem,
       })
       .select()
       .single();

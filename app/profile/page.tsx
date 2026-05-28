@@ -19,9 +19,13 @@ import {
   Settings,
   ShieldAlert,
   Save,
-  GraduationCap
+  GraduationCap,
+  Trash2,
+  Edit3,
+  Eye
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 // Schema matching database limits
 const profileSchema = z.object({
@@ -38,11 +42,38 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { user, profile, fetchProfile } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Danger zone account deletion states
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmationText !== "DELETE") return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await authService.deleteAccount();
+      
+      // Purge state and redirect to register page
+      const { clearSession } = useAuthStore.getState();
+      clearSession();
+      router.push("/signup");
+    } catch (err: any) {
+      console.error("Failed to delete account:", err);
+      setDeleteError(err.message || "Failed to purge account. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const {
     register,
@@ -84,6 +115,7 @@ export default function ProfilePage() {
       
       setSuccessMsg("Your student profile has been updated successfully!");
       setIsSavedRecently(true);
+      setIsEditing(false);
       
       // Auto dismiss success states
       setTimeout(() => {
@@ -175,6 +207,28 @@ export default function ProfilePage() {
                   </span>
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setIsEditing(!isEditing)}
+                className={`w-full mt-5 h-9 rounded-[12px] text-[10px] font-extrabold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-sm ${
+                  isEditing 
+                    ? "bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/20 shadow-yellow-500/5" 
+                    : "bg-primary/15 hover:bg-primary/20 text-primary border border-primary/20 shadow-primary/5"
+                }`}
+              >
+                {isEditing ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    Lock Form (View)
+                  </>
+                ) : (
+                  <>
+                    <Edit3 className="w-3.5 h-3.5" />
+                    Edit Profile
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
@@ -211,8 +265,8 @@ export default function ProfilePage() {
                     <input
                       id="fullName"
                       type="text"
-                      disabled={isLoading}
-                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 transition-colors"
+                      disabled={isLoading || !isEditing}
+                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       placeholder="e.g. Alex Mercer"
                       {...register("fullName")}
                     />
@@ -255,8 +309,8 @@ export default function ProfilePage() {
                     <input
                       id="collegeName"
                       type="text"
-                      disabled={isLoading}
-                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 transition-colors"
+                      disabled={isLoading || !isEditing}
+                      className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       placeholder="e.g. Stanford University"
                       {...register("collegeName")}
                     />
@@ -283,8 +337,8 @@ export default function ProfilePage() {
                       <input
                         id="course"
                         type="text"
-                        disabled={isLoading}
-                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 transition-colors"
+                        disabled={isLoading || !isEditing}
+                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-background/50 text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         placeholder="e.g. Computer Science & Eng."
                         {...register("course")}
                       />
@@ -308,8 +362,8 @@ export default function ProfilePage() {
                       </span>
                       <select
                         id="semester"
-                        disabled={isLoading}
-                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-[#101014] text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer"
+                        disabled={isLoading || !isEditing}
+                        className="w-full h-11 pl-10 pr-4 rounded-[14px] border border-border bg-[#101014] text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         {...register("semester", { valueAsNumber: true })}
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
@@ -365,38 +419,74 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {/* Submit Action Block */}
-              <div className="flex items-center justify-between p-4 glass-card rounded-[20px] border border-border">
-                <span className="text-[10px] text-muted-foreground">
-                  {isDirty ? "● Unsaved changes detected" : "✓ Settings match database"}
-                </span>
+              {/* Card 4: Danger Zone */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: 0.12 }}
+                className="glass-card rounded-[20px] border border-destructive/20 p-6 space-y-4 bg-destructive/5"
+              >
+                <div className="flex items-start gap-3 pb-3 border-b border-destructive/10">
+                  <div className="p-2 bg-destructive/10 rounded-[12px] text-destructive">
+                    <Trash2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-destructive uppercase tracking-wider">Danger Zone</h3>
+                    <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">Irreversible system options.</p>
+                  </div>
+                </div>
 
-                <motion.button
-                  type="submit"
-                  disabled={isLoading}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`h-11 px-6 rounded-[16px] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md duration-300 ${
-                    isSavedRecently 
-                      ? "bg-green-600 hover:bg-green-500 text-white shadow-green-500/20" 
-                      : "bg-primary hover:bg-primary/95 text-white shadow-primary/20"
-                  } disabled:opacity-50`}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : isSavedRecently ? (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      Saved Successfully!
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      Save Profile updates
-                    </>
-                  )}
-                </motion.button>
-              </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-white">Delete Student Account</h4>
+                    <p className="text-[10px] text-muted-foreground max-w-md">
+                      Permanently erase your student profile and all associated tracker data including subjects, assignments, timetable, exams, and grades. This action is absolute and cannot be undone.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="h-10 px-4 rounded-[14px] bg-destructive/10 hover:bg-destructive hover:text-white border border-destructive/30 hover:border-destructive text-destructive text-xs font-bold transition-all self-start sm:self-center shrink-0"
+                  >
+                    Delete Account
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Submit Action Block (only shown when editing and form is dirty) */}
+              {isEditing && isDirty && (
+                <div className="flex items-center justify-between p-4 glass-card rounded-[20px] border border-border">
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    {isDirty ? "● Unsaved changes detected" : "✓ Settings match database"}
+                  </span>
+
+                  <motion.button
+                    type="submit"
+                    disabled={isLoading}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`h-11 px-6 rounded-[16px] text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md duration-300 ${
+                      isSavedRecently 
+                        ? "bg-green-600 hover:bg-green-500 text-white shadow-green-500/20" 
+                        : "bg-primary hover:bg-primary/95 text-white shadow-primary/20"
+                    } disabled:opacity-50`}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : isSavedRecently ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Saved Successfully!
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        Save Profile updates
+                      </>
+                    )}
+                  </motion.button>
+                </div>
+              )}
 
             </form>
           </div>
@@ -404,6 +494,102 @@ export default function ProfilePage() {
         </div>
 
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                if (!isDeleting) {
+                  setIsDeleteModalOpen(false);
+                  setDeleteConfirmationText("");
+                  setDeleteError(null);
+                }
+              }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-md glass-card rounded-[20px] border border-destructive/30 bg-[#0F0F12] p-6 space-y-6 shadow-2xl z-10 overflow-hidden"
+            >
+              {/* Decorative background glow */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-destructive/10 blur-[80px]" />
+
+              <div className="space-y-2 text-center">
+                <div className="mx-auto w-12 h-12 bg-destructive/10 border border-destructive/20 text-destructive rounded-full flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 animate-pulse" />
+                </div>
+                <h3 className="text-base font-extrabold text-white">Delete Account Permanently?</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  This action is irreversible. All of your subjects, assignments, timetable schedules, exams, and academic grades will be permanently purged.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-[14px] p-3 text-center">
+                  <p className="text-[10px] text-destructive-foreground font-semibold">
+                    To confirm deletion, type <span className="underline font-bold text-white tracking-widest px-1">DELETE</span> below.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <input
+                    type="text"
+                    placeholder="Type DELETE to confirm"
+                    value={deleteConfirmationText}
+                    disabled={isDeleting}
+                    onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                    className="w-full h-11 px-4 rounded-[14px] border border-border bg-neutral-950 text-white text-sm focus:outline-none focus:ring-1 focus:ring-destructive focus:border-destructive text-center uppercase placeholder:lowercase placeholder:text-neutral-600 font-bold"
+                  />
+                </div>
+
+                {deleteError && (
+                  <p className="text-[10px] text-destructive text-center font-medium flex items-center justify-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {deleteError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setDeleteConfirmationText("");
+                    setDeleteError(null);
+                  }}
+                  className="flex-1 h-11 rounded-[14px] bg-neutral-900 border border-border hover:bg-neutral-800 text-neutral-300 text-xs font-bold transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isDeleting || deleteConfirmationText !== "DELETE"}
+                  onClick={handleDeleteAccount}
+                  className="flex-1 h-11 rounded-[14px] bg-destructive hover:bg-destructive/90 text-white text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-destructive/15"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Confirm Purge"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 }

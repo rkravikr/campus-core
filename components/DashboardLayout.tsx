@@ -22,6 +22,12 @@ import {
 import Link from "next/link";
 import { authService } from "@/services/auth.service";
 
+// Quick Actions & Keyboard Palette imports
+import CommandPalette from "@/components/CommandPalette";
+import FloatingActions from "@/components/FloatingActions";
+import AddAssignmentModal from "@/components/assignments/AddAssignmentModal";
+import QuickAttendanceModal from "@/components/attendance/QuickAttendanceModal";
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -32,6 +38,39 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Quick Action Portals Modals States
+  const [isCommandOpen, setIsCommandOpen] = useState(false);
+  const [isAddAssignmentOpen, setIsAddAssignmentOpen] = useState(false);
+  const [isQuickAttendanceOpen, setIsQuickAttendanceOpen] = useState(false);
+
+  // Listen globally to Ctrl+K or Cmd+K to launch the Command Palette!
+  useEffect(() => {
+    const handleGlobalPalette = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsCommandOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalPalette);
+    return () => window.removeEventListener("keydown", handleGlobalPalette);
+  }, []);
+
+  const handleQuickAction = (actionId: string) => {
+    if (actionId === "command-menu") {
+      setIsCommandOpen(true);
+    } else if (actionId === "add-assignment") {
+      setIsAddAssignmentOpen(true);
+    } else if (actionId === "quick-attendance") {
+      setIsQuickAttendanceOpen(true);
+    }
+  };
+
+  const handleActionSuccess = () => {
+    // Quick refresh of the current page data to sync UI instantly
+    router.refresh();
+    setTimeout(() => window.location.reload(), 300);
+  };
 
   // Initialize theme and collapse from localStorage on mount
   useEffect(() => {
@@ -163,7 +202,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen w-full bg-background flex flex-col md:flex-row relative">
       
       {/* 1. DESKTOP SIDEBAR (Visible on md and above) */}
-      <aside className={`hidden md:flex flex-col border-r border-border bg-card/45 backdrop-blur-xl h-screen sticky top-0 justify-between py-6 px-4 shrink-0 z-20 transition-all duration-300 ${
+      <aside className={`hidden md:flex flex-col border-r border-border bg-card/45 backdrop-blur-xl h-screen fixed left-0 top-0 bottom-0 justify-between py-6 px-4 shrink-0 z-20 transition-all duration-300 ${
         isCollapsed ? "w-[72px]" : "w-[240px]"
       }`}>
         <div className="space-y-8">
@@ -314,11 +353,34 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </nav>
 
       {/* 3. CONTENT AREA */}
-      <main className="flex-1 w-full flex flex-col min-h-[calc(100vh-3.5rem)] md:min-h-screen pb-20 md:pb-0">
+      <main className={`flex-1 w-full flex flex-col min-h-[calc(100vh-3.5rem)] md:min-h-screen pb-20 md:pb-0 transition-all duration-300 ${
+        isCollapsed ? "md:pl-[72px]" : "md:pl-[240px]"
+      }`}>
         <div className="flex-1 p-4 md:p-8 max-w-[1400px] mx-auto w-full transition-all duration-300">
           {children}
         </div>
       </main>
+
+      {/* Floating Speed-Dial Button & Palette overlays */}
+      <FloatingActions onTrigger={handleQuickAction} />
+
+      <CommandPalette 
+        isOpen={isCommandOpen} 
+        onClose={() => setIsCommandOpen(false)} 
+        onQuickAction={handleQuickAction} 
+      />
+
+      <AddAssignmentModal 
+        isOpen={isAddAssignmentOpen} 
+        onClose={() => setIsAddAssignmentOpen(false)} 
+        onSuccess={handleActionSuccess} 
+      />
+
+      <QuickAttendanceModal 
+        isOpen={isQuickAttendanceOpen} 
+        onClose={() => setIsQuickAttendanceOpen(false)} 
+        onSuccess={handleActionSuccess} 
+      />
     </div>
   );
 }

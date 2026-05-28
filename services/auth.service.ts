@@ -118,4 +118,12 @@ export const authService = {
     if (error) throw error;
     return data as Profile;
   },
+
+  /**
+   * Deletes the user account permanently by executing the security definer function.
+   */
+  async deleteAccount(): Promise<void> {
+    const { error } = await supabase.rpc("delete_user_account");
+    if (error) throw error;
+  },
 };

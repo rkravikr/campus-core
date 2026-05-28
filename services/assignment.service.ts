@@ -13,7 +13,7 @@ export const assignmentService = {
   /**
    * Fetches all assignments for the authenticated user, joining the subject details.
    */
-  async getAssignments(userId?: string): Promise<AssignmentWithSubject[]> {
+  async getAssignments(userId?: string, semester?: number): Promise<AssignmentWithSubject[]> {
     let uId = userId;
     if (!uId) {
       const { data: { session } } = await supabase.auth.getSession();
@@ -21,10 +21,21 @@ export const assignmentService = {
     }
     if (!uId) throw new Error("Unauthenticated");
 
+    let activeSem = semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", uId)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
+
     const { data, error } = await supabase
       .from("assignments")
       .select("*, subjects(subject_name)")
       .eq("user_id", uId)
+      .eq("semester", activeSem)
       .order("due_date", { ascending: true });
 
     if (error) throw error;
@@ -35,11 +46,21 @@ export const assignmentService = {
    * Creates a new assignment.
    */
   async addAssignment(
-    assignment: Omit<Assignment, "id" | "user_id" | "created_at" | "completed">
+    assignment: Omit<Assignment, "id" | "user_id" | "created_at" | "completed" | "semester"> & { semester?: number }
   ): Promise<AssignmentWithSubject> {
     const { data: { session } } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) throw new Error("Unauthenticated");
+
+    let activeSem = assignment.semester;
+    if (activeSem === undefined) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("semester")
+        .eq("id", user.id)
+        .single();
+      activeSem = profile?.semester || 1;
+    }
 
     const { data, error } = await supabase
       .from("assignments")
@@ -51,6 +72,7 @@ export const assignmentService = {
         due_date: assignment.due_date,
         priority: assignment.priority,
         completed: false,
+        semester: activeSem,
       })
       .select("*, subjects(subject_name)")
       .single();

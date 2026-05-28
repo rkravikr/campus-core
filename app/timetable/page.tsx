@@ -20,7 +20,10 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useAuthStore } from "@/store/authStore";
+
 export default function TimetablePage() {
+  const { profile } = useAuthStore();
   const [timetable, setTimetable] = useState<TimetableEntryWithSubject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +71,7 @@ export default function TimetablePage() {
 
   useEffect(() => {
     fetchTimetable();
-  }, []);
+  }, [profile?.semester]);
 
   // Callbacks
   const handleAddSuccess = (newEntry: TimetableEntryWithSubject) => {
@@ -240,8 +243,25 @@ export default function TimetablePage() {
                     {/* Classes Grid Listing */}
                     <div className="space-y-3 flex-1 min-h-[400px] bg-neutral-900/10 rounded-[20px] p-1.5 border border-border/20">
                       {dayClasses.length === 0 ? (
-                        <div className="h-full flex items-center justify-center p-4 border border-dashed border-border/20 rounded-[12px] text-[10px] text-muted-foreground/30 text-center uppercase tracking-wider">
-                          Free
+                        <div className="h-full flex flex-col justify-between p-4 border border-dashed border-border/20 rounded-[16px] text-[9px] text-muted-foreground/20 text-center uppercase tracking-widest min-h-[380px] relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.01)_0%,_transparent_80%)]">
+                          {/* Hourly dotted lines */}
+                          <div className="absolute inset-0 flex flex-col justify-between py-8 pointer-events-none opacity-20">
+                            <div className="border-b border-dashed border-border/20 w-full" />
+                            <div className="border-b border-dashed border-border/20 w-full" />
+                            <div className="border-b border-dashed border-border/20 w-full" />
+                            <div className="border-b border-dashed border-border/20 w-full" />
+                            <div className="border-b border-dashed border-border/20 w-full" />
+                          </div>
+                          
+                          <span className="text-[8px] font-mono tracking-widest text-muted-foreground/30 z-10 select-none">09:00 AM</span>
+                          <span className="text-[8px] font-mono tracking-widest text-muted-foreground/30 z-10 select-none">12:00 PM</span>
+                          <span className="text-[8px] font-mono tracking-widest text-muted-foreground/30 z-10 select-none">03:00 PM</span>
+                          
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <span className="text-[8px] text-muted-foreground/40 font-bold bg-neutral-950 px-2 py-0.5 rounded border border-border/40 uppercase tracking-widest">
+                              No Classes
+                            </span>
+                          </div>
                         </div>
                       ) : (
                         dayClasses.map((entry) => (
