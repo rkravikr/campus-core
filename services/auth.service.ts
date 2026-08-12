@@ -53,12 +53,19 @@ export const authService = {
       return { data: { session: mockSession as any, user: mockSession.user as any }, error: null };
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      return data;
+    } catch (err: any) {
+      if (err?.message?.includes("Failed to fetch") || err?.name === "TypeError") {
+        throw new Error("Unable to connect to Supabase database. Please ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in Vercel Environment Variables and redeployed.");
+      }
+      throw err;
+    }
   },
 
   /**
@@ -75,36 +82,49 @@ export const authService = {
       semester: number;
     }
   ) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: metadata.full_name,
-          college_name: metadata.college_name,
-          course: metadata.course,
-          semester: metadata.semester,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: metadata.full_name,
+            college_name: metadata.college_name,
+            course: metadata.course,
+            semester: metadata.semester,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
-        // In local development or V1 we can let it redirect to dashboard
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) throw error;
-    return data;
+      });
+      if (error) throw error;
+      return data;
+    } catch (err: any) {
+      if (err?.message?.includes("Failed to fetch") || err?.name === "TypeError") {
+        throw new Error("Unable to connect to Supabase database. Please check Vercel environment variables.");
+      }
+      throw err;
+    }
   },
 
   /**
    * Initiates the Google OAuth sign-in flow.
    */
   async signInWithGoogle() {
-    const { data, error } = await supabase.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      return data;
+    } catch (err: any) {
+      if (err?.message?.includes("Failed to fetch") || err?.name === "TypeError") {
+        throw new Error("Unable to connect to Supabase database. Please check Vercel environment variables.");
+      }
+      throw err;
+    }
   },
 
   /**
